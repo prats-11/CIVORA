@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CIVORA — People. Intelligence. Action.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Inter','sans-serif'], display: ['Sora','sans-serif'] },
+  colors: {
+    ink: '#0f1b2d', navy: '#16283f', mist: '#f4f6fa',
+    crit: '#ef4444', urg: '#f59e0b', need: '#eab308', vol: '#3b82f6',
+    ngo: '#8b5cf6', ok: '#10b981', ai: '#a855f7'
+  }
+}}}
+</script>
+<style>
+  /* ============ CIVORA DESIGN SYSTEM ============ */
+  * { -webkit-tap-highlight-color: transparent; }
+  body { background:#f4f6fa; color:#0f1b2d; font-family:Inter,sans-serif; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+  button { transition: transform .15s, background .2s, color .2s, border-color .2s, box-shadow .2s; }
+  button:not(.marker):active { transform: scale(.97); }
+  button:focus-visible, a:focus-visible { outline:2px solid #3b82f6; outline-offset:2px; border-radius:8px; }
+
+  .glass { background:rgba(255,255,255,.78); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.7); }
+  .card { background:#fff; border:1px solid #e8edf4; border-radius:20px; box-shadow:0 1px 2px rgba(15,27,45,.04), 0 10px 28px -14px rgba(15,27,45,.10); }
+  .card-h:hover { transform:translateY(-2px); box-shadow:0 2px 4px rgba(15,27,45,.05), 0 18px 36px -14px rgba(15,27,45,.16); }
+  .btn-p { background:#0f1b2d; color:#fff; border-radius:14px; font-weight:600; }
+  .btn-p:hover { background:#1d324f; box-shadow:0 10px 22px -10px rgba(15,27,45,.45); }
+  .btn-g { background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; border-radius:14px; font-weight:600; }
+  .btn-g:hover { box-shadow:0 10px 24px -8px rgba(16,185,129,.5); }
+  .btn-ai { background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff; border-radius:14px; font-weight:600; }
+  .btn-ai:hover { box-shadow:0 10px 24px -8px rgba(168,85,247,.5); }
+  .btn-o { background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; font-weight:600; color:#16283f;}
+  .btn-o:hover { border-color:#0f1b2d; }
+  .chip { border-radius:999px; font-size:11px; font-weight:600; padding:3px 10px; letter-spacing:.02em; }
+  .eyebrow { font-size:10px; font-weight:800; letter-spacing:.14em; color:#94a3b8; }
+  .h1 { font-family:Sora,sans-serif; font-weight:800; letter-spacing:-0.02em; }
+  .h2 { font-family:Sora,sans-serif; font-weight:700; letter-spacing:-0.01em; }
+  .field { background:#fff; border:1.5px solid #e2e8f0; border-radius:14px; padding:10px 14px; width:100%; font-size:14px; transition:.2s; }
+  .field:focus { border-color:#3b82f6; box-shadow:0 0 0 4px rgba(59,130,246,.12); outline:none; }
+  select,input,textarea { outline:none; }
+
+  .fade-in { animation:fadeIn .45s cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px);} to { opacity:1; transform:none;} }
+  .slide-in { animation:slideIn .35s cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes slideIn { from { opacity:0; transform:translateX(24px);} to { opacity:1; transform:none;} }
+  .reveal { animation:reveal .55s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes reveal { from { opacity:0; transform:scale(.94) translateY(8px);} to { opacity:1; transform:none;} }
+  .rise { animation:rise .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:none;} }
+  .toast-in { animation:toastIn .35s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes toastIn { from { opacity:0; transform:translateY(14px) scale(.96);} to { opacity:1; transform:none;} }
+
+  .pulse-dot { animation:pulseDot 1.6s ease-out infinite; }
+  @keyframes pulseDot { 0% { box-shadow:0 0 0 0 rgba(239,68,68,.5);} 70% { box-shadow:0 0 0 16px rgba(239,68,68,0);} 100% { box-shadow:0 0 0 0 rgba(239,68,68,0);} }
+  .pulse-soft { animation:pulseSoft 2.6s ease-out infinite; }
+  @keyframes pulseSoft { 0% { box-shadow:0 0 0 0 rgba(59,130,246,.30);} 70% { box-shadow:0 0 0 12px rgba(59,130,246,0);} 100% { box-shadow:0 0 0 0 rgba(59,130,246,0);} }
+  .spin-slow { animation:spin 6s linear infinite; } @keyframes spin { to { transform:rotate(360deg);} }
+  .spin-fast { animation:spin .9s linear infinite; }
+  .shimmer { background:linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+  .float-y { animation:floatY 5s ease-in-out infinite; } @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .blink { animation:blink 1.4s steps(2) infinite; } @keyframes blink { 50%{opacity:.25;} }
+
+  .grad-text { background:linear-gradient(120deg,#0f1b2d 20%,#2563eb 55%,#a855f7 85%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .grad-brand { background:linear-gradient(120deg,#2563eb,#a855f7); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .navlink { position:relative; color:#64748b; }
+  .navlink.active { color:#0f1b2d; font-weight:700; }
+  .navlink.active::after { content:''; position:absolute; left:20%; right:20%; bottom:-6px; height:3px; border-radius:99px; background:linear-gradient(90deg,#10b981,#3b82f6,#a855f7); }
+
+  .mapgrid { background-image:linear-gradient(rgba(148,163,184,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.13) 1px,transparent 1px); background-size:44px 44px; }
+  .marker { transition:transform .2s, filter .2s; cursor:pointer; }
+  .marker:hover { transform:scale(1.28); filter:drop-shadow(0 4px 8px rgba(0,0,0,.25)); z-index:40; }
+  .heat { mix-blend-mode:multiply; }
+
+  .step-dot { width:34px; height:34px; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; background:#e8edf5; color:#64748b; transition:.3s;}
+  .step-dot.on { background:#0f1b2d; color:#fff; box-shadow:0 6px 14px -4px rgba(15,27,45,.4); }
+  .step-dot.done { background:#10b981; color:#fff; }
+  .tabbtn { padding:6px 14px; border-radius:999px; font-size:12px; font-weight:600; color:#64748b; white-space:nowrap;}
+  .tabbtn.on { background:#0f1b2d; color:#fff; }
+
+  .catcard { border:1.5px solid #e8edf4; border-radius:18px; padding:16px 14px; background:#fff; text-align:left; transition:.18s; }
+  .catcard:hover { border-color:#94a3b8; transform:translateY(-2px); box-shadow:0 12px 24px -12px rgba(15,27,45,.18); }
+  .catcard.on { border-color:#0f1b2d; background:#0f1b2d; color:#fff; box-shadow:0 14px 28px -10px rgba(15,27,45,.4); }
+
+  .line-draw { stroke-dasharray:240; stroke-dashoffset:240; animation:linedraw 1.1s ease forwards; }
+  @keyframes linedraw { to { stroke-dashoffset:0; } }
+  .node-pop { animation:nodepop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+  @keyframes nodepop { from { opacity:0; transform:scale(.4);} to { opacity:1; transform:scale(1);} }
+  .ring-breathe { animation:breathe 3s ease-in-out infinite; }
+  @keyframes breathe { 0%,100%{ transform:scale(1); opacity:.5;} 50%{ transform:scale(1.06); opacity:.9;} }
+
+  .cora-glow { box-shadow:0 0 0 1px rgba(168,85,247,.25), 0 18px 50px -12px rgba(168,85,247,.45); }
+  .demo-bar { background:rgba(15,27,45,.94); backdrop-filter:blur(16px); box-shadow:0 20px 50px -12px rgba(15,27,45,.6); }
+
+  /* Presentation mode */
+  .presenting main { font-size:15.5px; }
+  .presenting .card { box-shadow:0 2px 4px rgba(15,27,45,.05), 0 16px 40px -16px rgba(15,27,45,.16); }
+
+  /* Mobile bottom-sheet behavior for the map popup */
+  @media (max-width: 1023px){
+    .map-pop { left:12px !important; right:12px; bottom:12px !important; width:auto !important; border-radius:20px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+/* ============================== DATA ============================== */
+const CATS = ['Medical','Food','Blood','Shelter','Safety','Disaster','Infrastructure','Elderly','Accessibility','Education','Environment','Animal Welfare'];
+const CAT_ICON = { Medical:'heart-pulse', Food:'utensils', Blood:'droplet', Shelter:'home', Safety:'shield-alert', Disaster:'cloud-lightning', Infrastructure:'construction', Elderly:'accessibility', Accessibility:'person-standing', Education:'book-open', Environment:'leaf', 'Animal Welfare':'paw-print', Other:'circle-help' };
+const CAT_DESC = { Medical:'Injury, illness or urgent care', Food:'Meals, rations or supplies', Blood:'Donors or blood units', Shelter:'A safe place to stay', Safety:'Hazards, threats or missing people', Disaster:'Fire, flood or storm damage', Infrastructure:'Roads, water, power, drainage', Elderly:'Support for seniors', Accessibility:'Mobility or disability barriers', Education:'Learning and mentorship', Environment:'Waste, pollution or cleanup', 'Animal Welfare':'Animals in distress', Other:'Something else entirely' };
+const CAT_COLOR = { Medical:'#ef4444', Food:'#f59e0b', Blood:'#dc2626', Shelter:'#8b5cf6', Safety:'#f97316', Disaster:'#dc2626', Infrastructure:'#64748b', Elderly:'#0ea5e9', Accessibility:'#3b82f6', Education:'#6366f1', Environment:'#10b981', 'Animal Welfare':'#a855f7', Other:'#64748b' };
+const SEV = { critical:{label:'CRITICAL',c:'#ef4444',bg:'#fef2f2'}, urgent:{label:'URGENT',c:'#f59e0b',bg:'#fffbeb'}, normal:{label:'COMMUNITY NEED',c:'#eab308',bg:'#fefce8'} };
+const STATUS_META = {
+  open:{label:'Open',c:'#3b82f6',bg:'#eff6ff'},
+  matching:{label:'Matching',c:'#a855f7',bg:'#faf5ff'},
+  in_progress:{label:'In Progress',c:'#f59e0b',bg:'#fffbeb'},
+  awaiting_confirmation:{label:'Awaiting Confirmation',c:'#0ea5e9',bg:'#f0f9ff'},
+  resolved:{label:'Resolved',c:'#10b981',bg:'#ecfdf5'}
+};
+const TRUST_META = { verified:{label:'VERIFIED',c:'#10b981'}, confirm:{label:'NEEDS CONFIRMATION',c:'#f59e0b'}, review:{label:'UNDER REVIEW',c:'#3b82f6'}, suspicious:{label:'SUSPICIOUS',c:'#ef4444'} };
+
+const TL = (t,txt,icon)=> ({t,txt,icon:icon||'circle-dot'});
+const initialCases = [
+  {id:'CV-2048',title:'Elderly person needs assistance near bus station',category:'Elderly',severity:'urgent',status:'in_progress',trust:91,trustState:'verified',x:38,y:34,loc:'Shivajinagar Bus Station · Pune',time:'8:42 PM',reporter:'Meera K.',desc:'An elderly man has been sitting alone near platform 3 for over an hour. He seems disoriented and cannot remember his address. Weather is getting cold.',responders:[{n:'Arjun S.',r:'Volunteer · 0.4 km'},{n:'CareBridge NGO',r:'Organization'}],org:'CareBridge NGO',peopleHelped:1,
+   timeline:[TL('8:42 PM','Reported by citizen'),TL('8:43 PM','AI classified as urgent — Elderly Assistance','sparkles'),TL('8:44 PM','2 nearby volunteers notified','send'),TL('8:46 PM','Volunteer Arjun S. accepted','user-check'),TL('8:51 PM','Assistance in progress','activity')]},
+  {id:'CV-2047',title:'Large fallen tree blocking main road',category:'Safety',severity:'critical',status:'matching',trust:94,trustState:'verified',x:58,y:22,loc:'FC Road · Deccan',time:'8:31 PM',reporter:'Dev P.',desc:'A large tree fell across FC Road after the storm. Completely blocking both lanes. Two cars narrowly avoided collision.',responders:[],org:null,peopleHelped:0,
+   timeline:[TL('8:31 PM','Reported by citizen'),TL('8:32 PM','AI detected: road obstruction — severity HIGH','sparkles'),TL('8:33 PM','Community verification requested (3 confirmations)','users'),TL('8:34 PM','Local authority + 5 volunteers notified','send')]},
+  {id:'CV-2046',title:'Blood donation needed — O-negative (Ruby Hall Clinic)',category:'Blood',severity:'critical',status:'open',trust:97,trustState:'verified',x:64,y:58,loc:'Ruby Hall Clinic · Camp',time:'7:55 PM',reporter:'Ruby Hall Clinic',desc:'Urgent need for O-negative blood for an accident victim in emergency surgery. 2 units required within 4 hours.',responders:[],org:'Ruby Hall Clinic',peopleHelped:1,
+   timeline:[TL('7:55 PM','Request posted by verified organization'),TL('7:56 PM','AI matched 14 O-negative donors within 5 km','sparkles')]},
+  {id:'CV-2045',title:'Stray dog injured near park gate',category:'Animal Welfare',severity:'urgent',status:'open',trust:82,trustState:'confirm',x:22,y:62,loc:'Kamala Nehru Park · Kothrud',time:'7:40 PM',reporter:'Lena T.',desc:'A stray dog appears to have an injured leg, limping near the north gate. Friendly but scared.',responders:[],org:null,peopleHelped:0,
+   timeline:[TL('7:40 PM','Reported by citizen'),TL('7:41 PM','AI classified: animal injury — urgent','sparkles'),TL('7:42 PM','Awaiting 1 more community confirmation','users')]},
+  {id:'CV-2044',title:'Street flooding after heavy rain',category:'Infrastructure',severity:'urgent',status:'open',trust:88,trustState:'verified',x:48,y:70,loc:'DP Road · Deccan',time:'7:15 PM',reporter:'Omar F.',desc:'Water is knee-deep on DP Road. Drainage appears blocked. Three reports of the same issue this week.',responders:[],org:null,peopleHelped:0,
+   timeline:[TL('7:15 PM','Reported by citizen'),TL('7:16 PM','AI linked 3 related reports — pattern detected','sparkles'),TL('7:17 PM','Escalated to CIVORA INSIGHT','brain')]},
+  {id:'CV-2043',title:'Family needs temporary shelter tonight',category:'Shelter',severity:'critical',status:'in_progress',trust:93,trustState:'verified',x:71,y:41,loc:'Near Mula Bridge · Koregaon Park',time:'6:58 PM',reporter:'Anonymous',desc:'A family of four, including two young children, lost their home to a kitchen fire today. They need safe shelter for the night.',responders:[{n:'ShelterFirst Foundation',r:'Organization'}],org:'ShelterFirst Foundation',peopleHelped:4,
+   timeline:[TL('6:58 PM','Anonymous report (privacy protected)'),TL('6:59 PM','AI classified: critical shelter need','sparkles'),TL('7:02 PM','ShelterFirst Foundation accepted case','building'),TL('7:10 PM','Temporary accommodation arranged','home')]},
+  {id:'CV-2042',title:'Food packets needed for night shelter',category:'Food',severity:'normal',status:'matching',trust:86,trustState:'verified',x:31,y:48,loc:'Community Hall · Kothrud',time:'6:30 PM',reporter:'Community Hall Admin',desc:'Night shelter hosting 40 people needs dinner packets. Kitchen is short on supplies this week.',responders:[],org:null,peopleHelped:40,
+   timeline:[TL('6:30 PM','Need posted by organization'),TL('6:31 PM','AI matched 3 food donors + 2 volunteer groups','sparkles')]},
+  {id:'CV-2041',title:'Wheelchair ramp damaged at library entrance',category:'Accessibility',severity:'normal',status:'open',trust:78,trustState:'confirm',x:55,y:80,loc:'Public Library · Camp',time:'5:12 PM',reporter:'Fatima R.',desc:'The wheelchair ramp railing is broken and the surface is cracked. Unsafe for elderly and disabled visitors.',responders:[],org:null,peopleHelped:0,
+   timeline:[TL('5:12 PM','Reported by citizen'),TL('5:13 PM','AI classified: accessibility hazard','sparkles')]},
+  {id:'CV-2040',title:'After-school tutoring volunteers wanted',category:'Education',severity:'normal',status:'matching',trust:90,trustState:'verified',x:44,y:16,loc:'Bright Minds Center · Deccan',time:'4:45 PM',reporter:'Bright Minds Center',desc:'Seeking 5 volunteer tutors for math and English, weekdays 4–6 PM, for 25 underprivileged students.',responders:[{n:'Student Volunteer Group',r:'4 members'}],org:'Bright Minds Center',peopleHelped:25,
+   timeline:[TL('4:45 PM','Opportunity posted'),TL('4:47 PM','AI matched 12 qualified volunteers','sparkles')]},
+  {id:'CV-2039',title:'Medical checkup camp — volunteers needed',category:'Medical',severity:'normal',status:'open',trust:92,trustState:'verified',x:68,y:75,loc:'Hadapsar Ground',time:'3:20 PM',reporter:'HealthBridge NGO',desc:'Free health camp this Sunday. Need 6 medical volunteers and 10 logistics helpers.',responders:[],org:'HealthBridge NGO',peopleHelped:200,
+   timeline:[TL('3:20 PM','Camp announced by HealthBridge NGO'),TL('3:21 PM','AI matched medical volunteers in 3 km radius','sparkles')]},
+  {id:'CV-2038',title:'Garbage accumulation near school',category:'Environment',severity:'urgent',status:'in_progress',trust:84,trustState:'verified',x:27,y:26,loc:'Sunrise School · Kothrud',time:'2:10 PM',reporter:'Priya D.',desc:'Uncollected garbage piling up near the school entrance for 5 days. Health hazard for children.',responders:[{n:'CleanCity Crew',r:'Volunteer team'}],org:null,peopleHelped:450,
+   timeline:[TL('2:10 PM','Reported by citizen'),TL('2:11 PM','AI flagged sanitation risk — urgent','sparkles'),TL('2:20 PM','CleanCity Crew accepted','user-check'),TL('2:40 PM','Cleanup drive in progress','activity')]},
+  {id:'CV-2037',title:'Missing elderly man — dementia patient',category:'Safety',severity:'critical',status:'in_progress',trust:96,trustState:'verified',x:60,y:35,loc:'Rosewood Colony · Koregaon Park',time:'1:05 PM',reporter:'Family (verified)',desc:'78-year-old man with dementia missing since 11 AM. Last seen near Rosewood Park wearing a grey jacket.',responders:[{n:'Neighborhood Watch',r:'6 volunteers'},{n:'CareBridge NGO',r:'Organization'}],org:'CareBridge NGO',peopleHelped:1,
+   timeline:[TL('1:05 PM','Missing person alert verified'),TL('1:06 PM','AI issued critical alert to 3 km radius','sparkles'),TL('1:08 PM','6 volunteers searching','users'),TL('2:30 PM','CCTV lead identified — searching Deccan','camera')]},
+  {id:'CV-2036',title:'Blankets needed for cold wave',category:'Shelter',severity:'urgent',status:'matching',trust:87,trustState:'verified',x:51,y:52,loc:'Pune Railway Station · Shivajinagar',time:'12:40 PM',reporter:'Night Shelter Network',desc:'Cold wave expected tonight. 60 blankets needed for people sleeping rough near the station.',responders:[],org:'Night Shelter Network',peopleHelped:60,
+   timeline:[TL('12:40 PM','Need posted'),TL('12:41 PM','AI matched 2 donors + distribution volunteers','sparkles')]},
+  {id:'CV-2035',title:'Broken streetlight — dark stretch',category:'Infrastructure',severity:'normal',status:'open',trust:74,trustState:'review',x:74,y:20,loc:'Hillcrest Road · Deccan',time:'11:15 AM',reporter:'Sanjay M.',desc:'Three consecutive streetlights out on Hillcrest Road. The stretch is pitch dark and unsafe at night.',responders:[],org:null,peopleHelped:0,
+   timeline:[TL('11:15 AM','Reported by citizen'),TL('11:16 AM','AI: infrastructure issue — routing to municipal cell','sparkles')]},
+  {id:'CV-2034',title:'Water tanker needed at construction site',category:'Disaster',severity:'urgent',status:'open',trust:81,trustState:'confirm',x:36,y:82,loc:'Lakeview Construction · Camp',time:'10:30 AM',reporter:'Site Supervisor',desc:'Water supply failure at worker housing. 80 workers without drinking water since morning.',responders:[],org:null,peopleHelped:80,
+   timeline:[TL('10:30 AM','Reported'),TL('10:31 AM','AI classified: urgent water need','sparkles')]},
+  {id:'CV-2033',title:'Sign language interpreter for hospital visit',category:'Accessibility',severity:'normal',status:'resolved',trust:95,trustState:'verified',x:63,y:64,loc:'Ruby Hall Clinic',time:'Yesterday',reporter:'Ravi K.',desc:'Deaf patient needed interpreter support for a specialist appointment.',responders:[{n:'Anjali V.',r:'Interpreter · Volunteer'}],org:null,peopleHelped:1,resolvedAt:'Yesterday · 6:20 PM',
+   timeline:[TL('Yesterday 2:00 PM','Reported'),TL('2:02 PM','AI matched certified interpreter','sparkles'),TL('2:15 PM','Interpreter accepted','user-check'),TL('6:20 PM','Resolved — confirmed by reporter','check-circle')]},
+  {id:'CV-2032',title:'Riverbank plastic cleanup drive',category:'Environment',severity:'normal',status:'resolved',trust:89,trustState:'verified',x:47,y:88,loc:'Mula Riverbank Trail · Camp',time:'Yesterday',reporter:'GreenEarth Org',desc:'Weekend cleanup drive — 34 volunteers collected 210 kg of plastic waste.',responders:[{n:'34 volunteers',r:'Community'}],org:'GreenEarth Org',peopleHelped:0,resolvedAt:'Yesterday · 5:00 PM',
+   timeline:[TL('Sat 9:00 AM','Drive announced'),TL('Sat 9:30 AM','34 volunteers joined','users'),TL('Sat 5:00 PM','Resolved — 210 kg collected','check-circle')]},
+  {id:'CV-2031',title:'Medicine delivery for bedridden patient',category:'Medical',severity:'urgent',status:'resolved',trust:93,trustState:'verified',x:42,y:40,loc:'Jasmine Apartments · Shivajinagar',time:'Yesterday',reporter:'Nurse Station',desc:'Monthly medicines delivered to a bedridden elderly patient by a volunteer rider.',responders:[{n:'Kabir H.',r:'Rider volunteer'}],org:null,peopleHelped:1,resolvedAt:'Yesterday · 1:45 PM',
+   timeline:[TL('11:30 AM','Request posted'),TL('11:31 AM','AI matched rider volunteer 0.6 km','sparkles'),TL('1:45 PM','Delivered — verified','check-circle')]},
+  {id:'CV-2030',title:'Fire safety workshop for schools',category:'Education',severity:'normal',status:'resolved',trust:91,trustState:'verified',x:30,y:38,loc:'Sunrise School',time:'2 days ago',reporter:'Fire Dept. Volunteers',desc:'Workshop conducted for 320 students with evacuation drill.',responders:[{n:'Fire Dept. Volunteers',r:'Team'}],org:null,peopleHelped:320,resolvedAt:'2 days ago',
+   timeline:[TL('Mon','Workshop scheduled'),TL('Tue 3:00 PM','Completed — 320 students trained','check-circle')]},
+  {id:'CV-2029',title:'Blood donation camp — 45 donors',category:'Blood',severity:'normal',status:'resolved',trust:94,trustState:'verified',x:66,y:50,loc:'Community Hall · Camp',time:'3 days ago',reporter:'RedLife Foundation',desc:'Successful camp with 45 donations collected for the city blood bank.',responders:[{n:'45 donors',r:'Community'}],org:'RedLife Foundation',peopleHelped:45,resolvedAt:'3 days ago',
+   timeline:[TL('Fri','Camp announced'),TL('Sun 4:00 PM','45 units collected — verified','check-circle')]}
+];
+
+const initialVolunteers = [
+  {id:1,name:'Dr. Aditi Rao',skill:'Medical',dist:0.4,rating:4.9,reliability:98,available:true,actions:87,helped:214,hours:162,badges:['First Responder','100 Lives Touched'],avatar:'AR',color:'#ef4444'},
+  {id:2,name:'Arjun Sharma',skill:'Elderly Care',dist:0.4,rating:4.8,reliability:96,available:true,actions:64,helped:98,hours:121,badges:['Neighborhood Guardian'],avatar:'AS',color:'#3b82f6'},
+  {id:3,name:'Kabir Hussain',skill:'Logistics & Riding',dist:0.6,rating:4.7,reliability:94,available:true,actions:52,helped:71,hours:88,badges:['Community Helper'],avatar:'KH',color:'#10b981'},
+  {id:4,name:'Anjali Verma',skill:'Sign Language',dist:0.9,rating:5.0,reliability:99,available:false,actions:41,helped:58,hours:96,badges:['Problem Solver'],avatar:'AV',color:'#a855f7'},
+  {id:5,name:'Meera Krishnan',skill:'Counseling',dist:1.1,rating:4.8,reliability:95,available:true,actions:38,helped:112,hours:140,badges:['Community Helper'],avatar:'MK',color:'#f59e0b'},
+  {id:6,name:'Dev Patel',skill:'First Aid',dist:1.3,rating:4.6,reliability:92,available:true,actions:33,helped:49,hours:61,badges:['First Responder'],avatar:'DP',color:'#0ea5e9'},
+  {id:7,name:'Lena Thomas',skill:'Animal Rescue',dist:1.5,rating:4.9,reliability:97,available:true,actions:59,helped:83,hours:104,badges:['Neighborhood Guardian'],avatar:'LT',color:'#ec4899'},
+  {id:8,name:'Omar Farouk',skill:'Construction',dist:1.8,rating:4.5,reliability:90,available:false,actions:27,helped:36,hours:72,badges:[],avatar:'OF',color:'#6366f1'},
+  {id:9,name:'Priya Desai',skill:'Teaching',dist:2.0,rating:4.8,reliability:95,available:true,actions:44,helped:156,hours:118,badges:['Problem Solver','Community Helper'],avatar:'PD',color:'#eab308'},
+  {id:10,name:'Sanjay Mehta',skill:'Electrical Repair',dist:2.2,rating:4.6,reliability:91,available:true,actions:31,helped:44,hours:58,badges:[],avatar:'SM',color:'#14b8a6'},
+  {id:11,name:'Fatima Rahman',skill:'Nursing',dist:2.4,rating:4.9,reliability:97,available:true,actions:66,helped:187,hours:149,badges:['First Responder','100 Lives Touched'],avatar:'FR',color:'#ef4444'},
+  {id:12,name:'Ravi Kumar',skill:'Food Distribution',dist:2.6,rating:4.7,reliability:93,available:true,actions:48,helped:320,hours:92,badges:['100 Lives Touched'],avatar:'RK',color:'#f97316'},
+  {id:13,name:'Sara Ali',skill:'Translation',dist:3.0,rating:4.8,reliability:94,available:false,actions:22,helped:35,hours:41,badges:['Community Helper'],avatar:'SA',color:'#8b5cf6'},
+  {id:14,name:'Vikram Nair',skill:'Search & Rescue',dist:3.4,rating:4.9,reliability:96,available:true,actions:39,helped:52,hours:133,badges:['First Responder','Neighborhood Guardian'],avatar:'VN',color:'#dc2626'},
+  {id:15,name:'Nina Costa',skill:'Elderly Care',dist:3.8,rating:4.7,reliability:92,available:true,actions:29,helped:41,hours:66,badges:[],avatar:'NC',color:'#06b6d4'}
+];
+
+const initialOrgs = [
+  {id:1,name:'CareBridge NGO',type:'NGO',focus:'Elderly & Medical',dist:0.8,volunteers:124,active:6,resolved:412,response:'14 min',verified:true},
+  {id:2,name:'Community First',type:'NGO',focus:'Medical Support',dist:0.8,volunteers:86,active:4,resolved:298,response:'16 min',verified:true},
+  {id:3,name:'HealthBridge NGO',type:'NGO',focus:'Public Health',dist:1.2,volunteers:210,active:8,resolved:530,response:'12 min',verified:true},
+  {id:4,name:'ShelterFirst Foundation',type:'Foundation',focus:'Housing & Shelter',dist:1.5,volunteers:64,active:3,resolved:187,response:'22 min',verified:true},
+  {id:5,name:'Ruby Hall Clinic',type:'Hospital',focus:'Emergency Care',dist:1.9,volunteers:45,active:5,resolved:640,response:'9 min',verified:true},
+  {id:6,name:'GreenEarth Org',type:'NGO',focus:'Environment',dist:2.3,volunteers:158,active:2,resolved:231,response:'31 min',verified:true},
+  {id:7,name:'RedLife Foundation',type:'Foundation',focus:'Blood Bank Network',dist:2.8,volunteers:92,active:3,resolved:356,response:'18 min',verified:true},
+  {id:8,name:'Bright Minds Center',type:'Community Group',focus:'Education',dist:3.1,volunteers:53,active:2,resolved:145,response:'26 min',verified:true}
+];
+
+const initialResources = [
+  {id:1,name:'Ambulance Unit A-7',type:'Vehicle',qty:1,org:'Ruby Hall Clinic',status:'available'},
+  {id:2,name:'First-aid kits',type:'Medical Supply',qty:48,org:'HealthBridge NGO',status:'available'},
+  {id:3,name:'Blood storage unit (O-)',type:'Medical Supply',qty:6,org:'RedLife Foundation',status:'low'},
+  {id:4,name:'Emergency shelter beds',type:'Shelter',qty:120,org:'ShelterFirst Foundation',status:'available'},
+  {id:5,name:'Blankets',type:'Shelter',qty:240,org:'Night Shelter Network',status:'available'},
+  {id:6,name:'Community kitchen meals',type:'Food',qty:400,org:'Community Hall',status:'available'},
+  {id:7,name:'Water tanker',type:'Utility',qty:2,org:'Municipal Cell',status:'available'},
+  {id:8,name:'Chainsaw & road-clearing kit',type:'Equipment',qty:3,org:'CleanCity Crew',status:'available'},
+  {id:9,name:'Wheelchairs',type:'Accessibility',qty:18,org:'CareBridge NGO',status:'available'},
+  {id:10,name:'Mobile health van',type:'Vehicle',qty:1,org:'HealthBridge NGO',status:'deployed'},
+  {id:11,name:'Animal rescue van',type:'Vehicle',qty:1,org:'PawCare Trust',status:'available'},
+  {id:12,name:'Tutoring tablets',type:'Education',qty:25,org:'Bright Minds Center',status:'available'}
+];
+
+const initialNotifs = [
+  {id:1,icon:'🔴',title:'Critical case near you',body:'Blood donation needed — O-negative at Ruby Hall Clinic, 1.9 km away.',time:'12 min ago',unread:true,caseId:'CV-2046'},
+  {id:2,icon:'🤝',title:'Your response team grew',body:'Vikram Nair joined the search effort for case CV-2037.',time:'40 min ago',unread:true,caseId:'CV-2037'},
+  {id:3,icon:'🧠',title:'CIVORA detected a recurring issue',body:'Drainage-related flooding pattern identified on DP Road (3 reports / 72 h).',time:'1 h ago',unread:true,caseId:'CV-2044'},
+  {id:4,icon:'🟢',title:'A nearby case matches your skills',body:'Medical checkup camp — Sunday, Hadapsar Ground. First Aid preferred.',time:'3 h ago',unread:false,caseId:'CV-2039'},
+  {id:5,icon:'✅',title:'A community case was verified',body:'CV-2033 — Sign language interpreter support confirmed by the reporter.',time:'Yesterday',unread:false,caseId:'CV-2033'},
+  {id:6,icon:'🏆',title:'Your community impact increased',body:'You reached 23 people helped. Badge unlocked: Community Helper.',time:'Yesterday',unread:false}
+];
+
+const WEEK_TREND = [42,55,48,63,58,71,66,79,74,88,82,95];
+const RESP_TREND = [31,28,26,27,24,22,23,20,19,18,18,17];
+const MONTHS = ['Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct'];
+const CAT_SPLIT = [['Medical',24],['Food',16],['Safety',14],['Infrastructure',12],['Elderly',10],['Environment',9],['Education',7],['Animal',5],['Other',3]];
+
+const ZONES = [
+  {x:14,y:14,label:'Kothrud'},{x:44,y:12,label:'Deccan'},{x:74,y:14,label:'Koregaon Park'},
+  {x:16,y:52,label:'Shivajinagar'},{x:46,y:56,label:'Camp'},{x:74,y:56,label:'Hadapsar'}
+];
+
+
+/* ============================== HELPERS / UI KIT ============================== */
+const kebab = s => s.replace(/([a-z0-9])([A-Z])/g,'$1-$2').toLowerCase();
+const ICONS = {};
+if (window.lucide && lucide.icons) Object.keys(lucide.icons).forEach(k=>{ const v=lucide.icons[k]; ICONS[kebab(k)] = v.iconNode || v; });
+const I = ({n,s=16,c='',sw=2,st}) => {
+  let node = ICONS[n];
+  if(node && !Array.isArray(node) && node.iconNode) node = node.iconNode;
+  if(!Array.isArray(node)) return <span style={{width:s,height:s,display:'inline-block'}}/>;
+  const kids = node.map((el,i)=>React.createElement(el[0],{key:i,...el[1]}));
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" className={c} style={st}>{kids}</svg>;
+};
+const nowT = () => new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+const km = c => (0.4 + ((c.x*7 + c.y*13) % 30)/10).toFixed(1);
+const uid = () => Math.random().toString(36).slice(2,9);
+
+const Counter = ({to, dur=1500, suffix='', decimals=0}) => {
+  const [v,setV] = useState(0);
+  useEffect(()=>{ let raf; const t0 = performance.now();
+    const step = t => { const p = Math.min(1,(t-t0)/dur); const e = 1-Math.pow(1-p,3);
+      setV(decimals? +(to*e).toFixed(decimals) : Math.round(to*e));
+      if(p<1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step); return ()=>cancelAnimationFrame(raf); },[to]);
+  return <span>{decimals? v.toFixed(decimals) : v.toLocaleString()}{suffix}</span>;
+};
+
+/* Brand mark — signal motif: three people-nodes connecting into action */
+const Logo = ({s=34}) => (
+  <svg width={s} height={s} viewBox="0 0 40 40">
+    <rect width="40" height="40" rx="12" fill="url(#lg)"/>
+    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#0f1b2d"/><stop offset="1" stopColor="#2563eb"/></linearGradient></defs>
+    <path d="M11 26 L20 13 L29 24" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity=".85"/>
+    <circle cx="11" cy="26" r="3.2" fill="#10b981"/>
+    <circle cx="20" cy="13" r="3.2" fill="#60a5fa"/>
+    <circle cx="29" cy="24" r="3.2" fill="#a855f7"/>
+  </svg>
+);
+
+const Av = ({name, color='#3b82f6', s=36}) => (
+  <span className="rounded-full flex items-center justify-center text-white font-bold shrink-0"
+    style={{width:s, height:s, background:color, fontSize:s*0.36}}>
+    {(name||'?').split(' ').map(w=>w[0]).slice(0,2).join('')}
+  </span>
+);
+const SevChip = ({sev}) => { const m=SEV[sev]||SEV.normal; return <span className="chip" style={{color:m.c,background:m.bg}}>{m.label}</span>; };
+const StatusChip = ({st}) => { const m=STATUS_META[st]||STATUS_META.open; return <span className="chip" style={{color:m.c,background:m.bg}}>{m.label}</span>; };
+const TrustChip = ({ts}) => { const m=TRUST_META[ts]||TRUST_META.review; return <span className="chip border" style={{color:m.c,borderColor:m.c+'44',background:m.c+'11'}}>{m.label}</span>; };
+const CatTag = ({cat}) => (<span className="chip inline-flex items-center gap-1" style={{color:CAT_COLOR[cat]||'#64748b',background:(CAT_COLOR[cat]||'#64748b')+'14'}}><I n={CAT_ICON[cat]||'circle-dot'} s={11}/>{cat}</span>);
+
+const Ring = ({pct, size=92, stroke=9, color='#10b981', children}) => {
+  const r=(size-stroke)/2, c=2*Math.PI*r;
+  return (<div className="relative inline-flex items-center justify-center" style={{width:size,height:size}}>
+    <svg width={size} height={size} className="-rotate-90">
+      <circle cx={size/2} cy={size/2} r={r} stroke="#e8edf5" strokeWidth={stroke} fill="none"/>
+      <circle cx={size/2} cy={size/2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeLinecap="round"
+        strokeDasharray={c} strokeDashoffset={c*(1-pct/100)} style={{transition:'stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'}}/>
+    </svg>
+    <div className="absolute inset-0 flex flex-col items-center justify-center">{children}</div>
+  </div>);
+};
+
+const LineChart = ({data, color='#3b82f6', h=130}) => {
+  const max = Math.max(...data)*1.15, w=560, p=10;
+  const pts = data.map((v,i)=>[p+i*(w-2*p)/(data.length-1), h-12-(v/max)*(h-34)]);
+  const path = pts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+','+pt[1].toFixed(1)).join(' ');
+  return (<svg viewBox={`0 0 ${w} ${h}`} className="w-full">
+    <path d={path+` L${w-p},${h-12} L${p},${h-12} Z`} fill={color} opacity=".07"/>
+    <path d={path} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
+    {pts.map((pt,i)=><circle key={i} cx={pt[0]} cy={pt[1]} r="3" fill="#fff" stroke={color} strokeWidth="2"/>)}
+  </svg>);
+};
+const BarChart = ({data}) => { const max=Math.max(...data.map(d=>d[1]));
+  return (<div className="space-y-2.5">{data.map(([l,v])=>(
+    <div key={l} className="flex items-center gap-3">
+      <span className="w-24 text-[11px] text-slate-500 font-semibold truncate">{l}</span>
+      <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all duration-700" style={{width:(v/max*100)+'%',background:CAT_COLOR[l]||'#3b82f6'}}/>
+      </div>
+      <span className="text-[11px] font-bold w-8 text-right text-slate-600">{v}%</span>
+    </div>))}</div>);
+};
+
+const SectionHead = ({icon, title, sub, right, color='#a855f7'}) => (
+  <div className="flex items-start justify-between gap-3 mb-4">
+    <div>
+      <h2 className="h2 text-[15px] flex items-center gap-2">{icon && <span style={{color}}><I n={icon} s={16}/></span>}{title}</h2>
+      {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+    </div>
+    {right}
+  </div>
+);
+
+const BADGES = {
+  'First Responder':{icon:'zap',c:'#ef4444',d:'Answered a critical alert'},
+  'Community Helper':{icon:'heart-handshake',c:'#10b981',d:'10+ verified helpful actions'},
+  'Problem Solver':{icon:'puzzle',c:'#f59e0b',d:'Resolved complex cases'},
+  'Neighborhood Guardian':{icon:'shield-check',c:'#3b82f6',d:'Consistent local presence'},
+  '100 Lives Touched':{icon:'sparkles',c:'#a855f7',d:'Helped 100+ people'}
+};
+const BadgePill = ({name, big}) => { const b=BADGES[name]; if(!b) return null;
+  return (<span className={`inline-flex items-center gap-1.5 rounded-full border font-semibold ${big?'px-3.5 py-2 text-xs':'px-2.5 py-1 text-[10px]'}`}
+    style={{color:b.c, borderColor:b.c+'33', background:b.c+'0d'}} title={b.d}>
+    <I n={b.icon} s={big?14:11}/>{name}</span>);
+};
+
+/* ============================== LANDING ============================== */
+const LOOP = [
+  {icon:'megaphone', t:'REPORT', d:'A citizen flags a problem in seconds — text, photo, or voice.', c:'#3b82f6'},
+  {icon:'brain', t:'AI ANALYSIS', d:'CIVORA understands category, severity, trust & duplicates.', c:'#a855f7'},
+  {icon:'users', t:'COMMUNITY MATCH', d:'The right volunteers, NGOs & resources are matched by AI.', c:'#f59e0b'},
+  {icon:'heart-handshake', t:'HUMAN ACTION', d:'Real people coordinate and act. AI never replaces humans.', c:'#ef4444'},
+  {icon:'badge-check', t:'VERIFIED IMPACT', d:'Resolution is human-confirmed and impact is measured.', c:'#10b981'}
+];
+const Landing = ({enter, stats, startDemo}) => (
+  <div className="min-h-screen" style={{background:'linear-gradient(180deg,#f7f9fd 0%,#eef3fa 55%,#f7f9fd 100%)'}}>
+    <div className="max-w-7xl mx-auto px-5">
+      <div className="flex items-center justify-between py-5">
+        <div className="flex items-center gap-2.5">
+          <Logo s={36}/>
+          <div><span className="h1 text-lg leading-none block">CIVORA</span>
+          <span className="text-[9px] font-bold tracking-[.18em] text-slate-400">PEOPLE. INTELLIGENCE. ACTION.</span></div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="hidden md:flex btn-ai px-4 py-2.5 text-xs items-center gap-2" onClick={startDemo}><I n="play" s={13}/>Watch the 90-sec demo</button>
+          <button className="btn-p px-5 py-2.5 text-sm" onClick={()=>enter('citizen','explore')}>Enter App</button>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-10 items-center pt-8 pb-14">
+        <div className="fade-in">
+          <span className="chip inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 shadow-sm mb-5"><span className="w-2 h-2 rounded-full bg-ok animate-pulse"/>Live community network · AI-coordinated</span>
+          <h1 className="h1 leading-[1.02] text-5xl md:text-6xl">CIVORA</h1>
+          <p className="h2 text-xl md:text-2xl mt-2 grad-text">People. Intelligence. Action.</p>
+          <p className="text-slate-600 mt-5 text-[15px] leading-relaxed max-w-lg">
+            Turn community problems into coordinated action. CIVORA's AI identifies problems, understands them,
+            prioritizes them, and connects the right people — <b className="text-ink">humans do the helping</b>.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-7">
+            <button className="btn-p px-6 py-3.5 text-sm flex items-center gap-2" onClick={()=>enter('citizen','report')}><I n="megaphone" s={16}/>Report a Problem</button>
+            <button className="btn-g px-6 py-3.5 text-sm flex items-center gap-2" onClick={()=>enter('volunteer','volunteer')}><I n="heart-handshake" s={16}/>Help Someone Nearby</button>
+            <button className="btn-ai px-6 py-3.5 text-sm flex items-center gap-2 md:hidden" onClick={startDemo}><I n="play" s={14}/>Demo</button>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-6">
+            {['Human-in-the-loop safety','Privacy-first reporting','Verified community impact'].map(t=>(
+              <span key={t} className="chip bg-white border border-slate-200 text-slate-500 inline-flex items-center gap-1"><I n="shield-check" s={11}/>{t}</span>))}
+          </div>
+        </div>
+
+        <div className="relative h-[420px] hidden md:block fade-in">
+          <div className="absolute inset-0 rounded-[28px] mapgrid border border-white shadow-2xl overflow-hidden" style={{background:'linear-gradient(135deg,#e8eefb,#f3ecfd 60%,#e6f7f0)'}}>
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0,30 C30,26 60,40 100,34" stroke="#c7d3e6" strokeWidth="2.6" fill="none"/>
+              <path d="M20,0 C26,35 22,70 30,100" stroke="#c7d3e6" strokeWidth="2" fill="none"/>
+              <path d="M0,70 C40,64 70,80 100,72" stroke="#d5deee" strokeWidth="1.6" fill="none"/>
+              <path d="M64,0 C60,40 74,70 68,100" stroke="#d5deee" strokeWidth="1.6" fill="none"/>
+            </svg>
+            {[{x:22,y:26,c:'#ef4444',pulse:1,i:'heart-pulse'},{x:64,y:40,c:'#f59e0b',i:'construction'},{x:40,y:62,c:'#eab308',i:'utensils'},{x:78,y:70,c:'#10b981',i:'check'},{x:50,y:24,c:'#8b5cf6',i:'building'},{x:30,y:78,c:'#3b82f6',i:'hand-helping'}].map((m,i)=>(
+              <span key={i} className="absolute" style={{left:m.x+'%',top:m.y+'%'}}>
+                {m.pulse && <span className="pulse-dot absolute -inset-1 rounded-full"/>}
+                <span className="w-7 h-7 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white relative" style={{background:m.c}}><I n={m.i} s={13}/></span>
+              </span>))}
+            <span className="absolute w-16 h-16 rounded-full flex items-center justify-center text-white text-xs font-bold border-4 border-white shadow-xl" style={{left:'52%',top:'52%',background:'#0f1b2d'}}>12</span>
+          </div>
+          <div className="absolute -left-4 top-8 glass rounded-2xl p-3.5 shadow-xl w-56 float-y">
+            <div className="flex items-center gap-2 text-[11px] font-bold text-crit"><span className="w-2 h-2 rounded-full bg-crit pulse-dot"/>CRITICAL ALERT</div>
+            <p className="text-xs font-semibold mt-1.5 leading-snug">Blood donation needed — O-negative · Ruby Hall Clinic</p>
+            <p className="text-[10px] text-slate-500 mt-1">14 donors matched · 1.9 km</p>
+          </div>
+          <div className="absolute -right-3 bottom-16 glass rounded-2xl p-3.5 shadow-xl w-60 float-y" style={{animationDelay:'1.2s'}}>
+            <div className="flex items-center gap-2 text-[11px] font-bold text-ai"><I n="sparkles" s={12}/>CIVORA MATCH</div>
+            <div className="flex items-center gap-2.5 mt-2"><Av name="Aditi Rao" color="#ef4444" s={30}/><div><p className="text-xs font-bold">Dr. Aditi · 0.4 km</p><p className="text-[10px] text-slate-500">98% reliability · ★4.9</p></div></div>
+          </div>
+          <div className="absolute left-10 -bottom-4 glass rounded-2xl px-4 py-3 shadow-xl flex items-center gap-2.5 float-y" style={{animationDelay:'.6s'}}>
+            <span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="bot" s={15}/></span>
+            <div><p className="text-xs font-bold">CORA is coordinating</p><p className="text-[10px] text-slate-500">3 volunteers notified near you</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-14">
+        {[['heart-handshake',stats.helped,'People Helped','#10b981'],['users',stats.volunteers,'Volunteers','#3b82f6'],['badge-check',stats.resolved,'Issues Resolved','#a855f7'],['timer',stats.response,'Avg Response','#f59e0b',' min']].map(([ic,v,l,c,sfx])=>(
+          <div key={l} className="card card-h p-5 text-center">
+            <span className="w-10 h-10 rounded-2xl inline-flex items-center justify-center mb-2" style={{background:c+'14',color:c}}><I n={ic} s={18}/></span>
+            <p className="h1 text-2xl md:text-3xl" style={{color:c}}><Counter to={v} suffix={sfx||''}/></p>
+            <p className="text-xs font-semibold text-slate-500 mt-1">{l}</p>
+          </div>))}
+      </div>
+
+      <div className="pb-16">
+        <div className="text-center mb-10">
+          <p className="chip inline-block bg-ai/10 text-ai mb-3">THE CIVORA ACTION LOOP</p>
+          <h2 className="h1 text-3xl md:text-4xl">From scattered reports<br className="hidden md:block"/> to <span className="grad-text">coordinated human action</span></h2>
+        </div>
+        <div className="grid md:grid-cols-5 gap-4">
+          {LOOP.map((s,i)=>(
+            <div key={s.t} className="relative fade-in" style={{animationDelay:(i*0.12)+'s'}}>
+              <div className="card card-h p-5 h-full text-center">
+                <span className="w-12 h-12 rounded-2xl inline-flex items-center justify-center mb-3 shadow-lg text-white" style={{background:`linear-gradient(135deg,${s.c},${s.c}cc)`}}><I n={s.icon} s={20}/></span>
+                <p className="h2 text-[13px] tracking-wide">{s.t}</p>
+                <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{s.d}</p>
+              </div>
+              {i<4 && <span className="hidden md:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white shadow-md border border-slate-200 items-center justify-center text-slate-400"><I n="chevron-right" s={14}/></span>}
+            </div>))}
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-5 pb-16">
+        {[
+          {role:'citizen', view:'explore', icon:'megaphone', c:'#3b82f6', t:'Citizen Mode', d:'Report problems, request help, track cases, and see your neighborhood come alive.'},
+          {role:'volunteer', view:'volunteer', icon:'heart-handshake', c:'#10b981', t:'Volunteer Mode', d:'Discover nearby needs matched to your skills and build a verified contribution history.'},
+          {role:'organization', view:'orgs', icon:'building', c:'#8b5cf6', t:'Organization Mode', d:'NGOs & institutions manage cases, resources, volunteers, and measurable impact.'}
+        ].map(m=>(
+          <div key={m.t} className="card card-h p-6 cursor-pointer group" onClick={()=>enter(m.role,m.view)}>
+            <span className="w-11 h-11 rounded-2xl inline-flex items-center justify-center mb-3" style={{background:m.c+'14',color:m.c}}><I n={m.icon} s={20}/></span>
+            <h3 className="h2 text-lg">{m.t}</h3>
+            <p className="text-[13px] text-slate-500 mt-2 leading-relaxed">{m.d}</p>
+            <span className="inline-flex items-center gap-1 text-xs font-bold mt-4 group-hover:gap-2 transition-all" style={{color:m.c}}>Enter <I n="arrow-right" s={13}/></span>
+          </div>))}
+      </div>
+
+      <div className="card p-8 md:p-10 mb-16 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[.04]" style={{background:'radial-gradient(circle at 30% 20%, #a855f7, transparent 40%), radial-gradient(circle at 70% 80%, #10b981, transparent 40%)'}}/>
+        <div className="flex justify-center mb-4"><Logo s={44}/></div>
+        <p className="h2 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">"AI should not replace humans. AI identifies problems, understands them, connects the right people — <span className="grad-text">humans perform the actual helping.</span>"</p>
+        <p className="text-[10px] font-bold text-slate-400 mt-4 tracking-[.18em]">THE CIVORA PHILOSOPHY</p>
+      </div>
+
+      <div className="text-center pb-10 text-xs text-slate-400">CIVORA · People. Intelligence. Action. · Demo build for hackathon judging</div>
+    </div>
+  </div>
+);
+
+/* ============================== TOP NAV + NOTIFICATIONS ============================== */
+const ROLE_HOME = { citizen:'explore', volunteer:'volunteer', organization:'orgs' };
+const RoleSwitcher = ({role, setRole}) => (
+  <div className="flex bg-slate-100 rounded-full p-1">
+    {[['citizen','Citizen'],['volunteer','Volunteer'],['organization','Organization']].map(([r,l])=>(
+      <button key={r} onClick={()=>setRole(r)}
+        className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold ${role===r?'bg-ink text-white shadow':'text-slate-500 hover:text-ink'}`}>{l}</button>))}
+  </div>
+);
+
+const notifGroup = n => {
+  if(n.icon==='🔴' || /critical|urgent/i.test(n.title)) return 'URGENT';
+  if(/just now|min ago|h ago/.test(n.time)) return 'TODAY';
+  return 'EARLIER';
+};
+const TopNav = ({view, go, role, setRole, unread, notifOpen, setNotifOpen, notifs, markAllRead, openCase, setCoraOpen, enterEmergency, startDemo, present, setPresent}) => {
+  const links = [['explore','Explore'],['report','Report'],['volunteer','Volunteer'],['impact','Impact'],['orgs','Organizations'],['insight','Insight']];
+  const groups = ['URGENT','TODAY','EARLIER'].map(g=>[g, notifs.filter(n=>notifGroup(n)===g)]).filter(([,l])=>l.length);
+  return (
+  <div className="sticky top-0 z-40 glass border-b border-slate-200/60">
+    <div className="max-w-[1500px] mx-auto px-4 py-2.5 flex items-center gap-4 flex-wrap">
+      <button className="flex items-center gap-2.5" onClick={()=>go('explore')}>
+        <Logo s={32}/>
+        <span className="h1 text-[17px] tracking-tight">CIVORA</span>
+      </button>
+      <nav className="hidden lg:flex items-center gap-5 ml-2">
+        {links.map(([v,l])=>(
+          <button key={v} onClick={()=>go(v)} className={`navlink text-[13px] font-medium hover:text-ink ${view===v?'active':''}`}>{l}</button>))}
+      </nav>
+      <div className="flex-1"/>
+      <button onClick={startDemo} className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-[11px] font-extrabold tracking-wide shadow-lg hover:shadow-xl hover:scale-[1.03]" style={{background:'linear-gradient(135deg,#10b981,#2563eb,#a855f7)'}}>
+        <I n="play" s={12}/>START CIVORA DEMO</button>
+      <RoleSwitcher role={role} setRole={setRole}/>
+      <button onClick={()=>setPresent(!present)} title="Presentation Mode" className={`hidden sm:flex w-9 h-9 rounded-full items-center justify-center ${present?'bg-ink text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}><I n="monitor-play" s={16}/></button>
+      <button onClick={()=>setCoraOpen(true)} className="hidden sm:flex btn-ai items-center gap-1.5 px-3.5 py-2 rounded-full text-xs hover:scale-105"><I n="sparkles" s={13}/>CORA</button>
+      <button onClick={enterEmergency} title="Emergency Mode" className="w-9 h-9 rounded-full bg-crit/10 text-crit flex items-center justify-center hover:bg-crit hover:text-white"><I n="siren" s={16}/></button>
+      <div className="relative">
+        <button onClick={(e)=>{e.stopPropagation(); setNotifOpen(!notifOpen);}} className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 relative">
+          <I n="bell" s={16}/>
+          {unread>0 && <span className="absolute -top-1 -right-1 min-w-[18px] px-1 h-[18px] rounded-full bg-crit text-white text-[9px] font-bold flex items-center justify-center">{unread}</span>}
+        </button>
+        {notifOpen && (
+          <div className="absolute right-0 mt-2 w-[350px] card p-2 slide-in z-50 max-h-[440px] overflow-y-auto" onClick={e=>e.stopPropagation()}>
+            <div className="flex items-center justify-between px-2 py-1.5">
+              <p className="h2 text-sm">Activity Center</p>
+              <button onClick={markAllRead} className="text-[11px] font-bold text-vol hover:underline">Mark all read</button>
+            </div>
+            {groups.map(([g,list])=>(
+              <div key={g}>
+                <p className={`eyebrow px-2 pt-2 pb-1 ${g==='URGENT'?'text-crit':''}`}>{g}</p>
+                {list.map(n=>(
+                  <div key={n.id} onClick={()=>{ if(n.caseId){openCase(n.caseId); setNotifOpen(false);} }}
+                    className={`flex gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-slate-50 ${n.unread?'bg-vol/5':''}`}>
+                    <span className="text-lg leading-none mt-0.5">{n.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-xs leading-snug ${n.unread?'font-bold':'font-semibold text-slate-600'}`}>{n.title}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{n.body}</p>
+                      <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
+                    </div>
+                    {n.unread && <span className="w-2 h-2 rounded-full bg-vol mt-1.5 shrink-0"/>}
+                  </div>))}
+              </div>))}
+          </div>)}
+      </div>
+      <button onClick={()=>go('profile')}><Av name="Alex Morgan" color="#0f1b2d" s={34}/></button>
+    </div>
+    <nav className="lg:hidden flex gap-4 px-4 pb-2 overflow-x-auto">
+      {links.map(([v,l])=>(<button key={v} onClick={()=>go(v)} className={`navlink text-xs font-medium whitespace-nowrap ${view===v?'active':''}`}>{l}</button>))}
+    </nav>
+  </div>);
+};
+
+/* ============================== TOASTS ============================== */
+const Toasts = ({toasts}) => (
+  <div className="fixed bottom-20 lg:bottom-5 right-5 z-[80] space-y-2.5 w-[320px] max-w-[calc(100vw-40px)]">
+    {toasts.map(t=>(
+      <div key={t.id} className="toast-in glass rounded-2xl p-3.5 shadow-2xl flex items-start gap-3 border-l-4" style={{borderLeftColor:t.color||'#10b981'}}>
+        <span className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{background:(t.color||'#10b981')+'14', color:t.color||'#10b981'}}><I n={t.icon||'check'} s={15}/></span>
+        <div className="min-w-0"><p className="text-xs font-bold leading-snug">{t.title}</p>{t.body && <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{t.body}</p>}</div>
+      </div>))}
+  </div>
+);
+
+/* ============================== MAP ============================== */
+const markerColor = c => c.status==='resolved' ? '#10b981' : SEV[c.severity].c;
+
+const MapView = ({cases, vols, orgs, filter, onSelect, selected, heat, showVol=true, showOrg=true, height=560}) => {
+  const [expanded, setExpanded] = useState({});
+  const [hoverId, setHoverId] = useState(null);
+  const visible = cases.filter(c=>{
+    if(filter && filter.cat!=='All' && c.category!==filter.cat) return false;
+    if(filter && filter.sev && c.severity!==filter.sev) return false;
+    if(filter && filter.q){ const q=filter.q.toLowerCase();
+      if(!(c.title.toLowerCase().includes(q)||c.category.toLowerCase().includes(q)||c.loc.toLowerCase().includes(q)||c.id.toLowerCase().includes(q))) return false; }
+    return true;
+  });
+  const buckets = {};
+  visible.forEach(c=>{ const k=Math.floor(c.x/16)+'-'+Math.floor(c.y/16); (buckets[k]=buckets[k]||[]).push(c); });
+  const cells = Object.values(buckets).map(list=>{
+    const cx=list.reduce((a,c)=>a+c.x,0)/list.length, cy=list.reduce((a,c)=>a+c.y,0)/list.length;
+    return {list,cx,cy};
+  });
+  const hoverCase = cases.find(c=>c.id===hoverId && c.id!==selected);
+  const HEATS = {
+    needs:[{x:48,y:70,r:26,c:'#ef4444',o:.5},{x:58,y:22,r:20,c:'#f59e0b',o:.45},{x:64,y:58,r:16,c:'#f59e0b',o:.4},{x:31,y:48,r:14,c:'#eab308',o:.35}],
+    volunteers:[{x:38,y:34,r:24,c:'#3b82f6',o:.5},{x:64,y:58,r:20,c:'#3b82f6',o:.45},{x:44,y:16,r:14,c:'#3b82f6',o:.35},{x:22,y:62,r:10,c:'#3b82f6',o:.2}],
+    resolved:[{x:63,y:64,r:18,c:'#10b981',o:.5},{x:47,y:88,r:16,c:'#10b981',o:.45},{x:30,y:38,r:14,c:'#10b981',o:.4},{x:66,y:50,r:12,c:'#10b981',o:.35}],
+    response:[{x:74,y:56,r:20,c:'#10b981',o:.45},{x:16,y:52,r:18,c:'#f59e0b',o:.45},{x:46,y:56,r:16,c:'#ef4444',o:.4},{x:74,y:14,r:12,c:'#10b981',o:.35}],
+    gaps:[{x:36,y:82,r:24,c:'#ef4444',o:.5},{x:74,y:20,r:18,c:'#f59e0b',o:.45},{x:27,y:26,r:12,c:'#eab308',o:.35}]
+  };
+  return (
+  <div className="relative rounded-[24px] overflow-hidden border border-slate-200 shadow-inner mapgrid select-none"
+    style={{height, background:'linear-gradient(135deg,#eef3fb 0%,#f4f0fd 50%,#eafaf2 100%)'}}>
+    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M0,28 C25,24 55,38 100,32" stroke="#c2cfe4" strokeWidth="1.8" fill="none"/>
+      <path d="M0,62 C35,56 65,74 100,66" stroke="#c2cfe4" strokeWidth="1.5" fill="none"/>
+      <path d="M18,0 C24,30 20,70 28,100" stroke="#ccd7ea" strokeWidth="1.3" fill="none"/>
+      <path d="M52,0 C48,35 60,65 54,100" stroke="#ccd7ea" strokeWidth="1.3" fill="none"/>
+      <path d="M80,0 C76,30 88,60 82,100" stroke="#d5deee" strokeWidth="1" fill="none"/>
+      <path d="M0,84 C30,80 70,92 100,86" stroke="#d5deee" strokeWidth="1" fill="none"/>
+      <path d="M0,10 C40,6 60,16 100,10" stroke="#d5deee" strokeWidth="1" fill="none"/>
+    </svg>
+    {ZONES.map(z=>(<span key={z.label} className="absolute text-[10px] font-bold tracking-widest text-slate-400/80" style={{left:z.x+'%',top:z.y+'%'}}>{z.label.toUpperCase()}</span>))}
+    {heat && HEATS[heat] && HEATS[heat].map((h,i)=>(
+      <span key={i} className="heat absolute rounded-full pointer-events-none" style={{
+        left:`calc(${h.x}% - ${h.r*7}px)`, top:`calc(${h.y}% - ${h.r*7}px)`, width:h.r*14, height:h.r*14,
+        background:`radial-gradient(circle, ${h.c}${Math.round(h.o*255).toString(16).padStart(2,'0')} 0%, transparent 70%)`}}/>))}
+    {showOrg && !heat && orgs.map(o=>(
+      <span key={'o'+o.id} className="marker absolute" style={{left:(o.id*11+8)%88+4+'%', top:(o.id*17+12)%80+8+'%'}} title={o.name+' · '+o.focus}>
+        <span className="w-6 h-6 rounded-lg border-2 border-white shadow-md flex items-center justify-center text-white" style={{background:'#8b5cf6'}}><I n="building" s={11}/></span>
+      </span>))}
+    {showVol && !heat && vols.filter(v=>v.available).map((v,i)=>(
+      <span key={'v'+v.id} className="absolute pulse-soft rounded-full" style={{left:(v.id*23+6)%90+3+'%', top:(v.id*31+9)%84+5+'%', animationDelay:(i*0.35)+'s'}} title={v.name+' · '+v.skill}>
+        <span className="block w-3 h-3 rounded-full border-2 border-white shadow" style={{background:'#3b82f6'}}/>
+      </span>))}
+    {cells.map((cell,ci)=>{
+      if(cell.list.length>=3 && !expanded[ci]){
+        const crit = cell.list.some(c=>c.severity==='critical'&&c.status!=='resolved');
+        return (<button key={ci} className="marker absolute z-20" style={{left:cell.cx+'%',top:cell.cy+'%'}} onClick={()=>setExpanded({...expanded,[ci]:true})}>
+          {crit && <span className="pulse-dot absolute -inset-1.5 rounded-full"/>}
+          <span className="w-10 h-10 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white text-sm font-extrabold" style={{background:crit?'#ef4444':'#0f1b2d'}}>{cell.list.length}</span>
+        </button>);
+      }
+      return cell.list.map((c,i)=>(
+        <button key={c.id} className="marker absolute z-10" style={{left:c.x+'%',top:c.y+'%'}}
+          onClick={()=>onSelect(c.id)} onMouseEnter={()=>setHoverId(c.id)} onMouseLeave={()=>setHoverId(null)} title="">
+          {c.severity==='critical' && c.status!=='resolved' && <span className="pulse-dot absolute -inset-1 rounded-full"/>}
+          {c.status!=='resolved' && c.severity!=='critical' && <span className="pulse-soft absolute -inset-1 rounded-full" style={{animationDelay:(i*0.5)+'s'}}/>}
+          <span className={`w-7 h-7 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white relative ${selected===c.id?'ring-4 ring-vol/40':''}`} style={{background:markerColor(c)}}>
+            <I n={c.status==='resolved'?'check':(CAT_ICON[c.category]||'map-pin')} s={12}/>
+          </span>
+        </button>));
+    })}
+    {/* hover preview */}
+    {hoverCase && (
+      <div className="absolute z-30 pointer-events-none glass rounded-2xl px-3.5 py-2.5 shadow-xl fade-in"
+        style={{left:Math.min(hoverCase.x,62)+'%', top:Math.max(hoverCase.y-14,2)+'%'}}>
+        <div className="flex items-center gap-1.5 mb-0.5"><SevChip sev={hoverCase.severity}/><span className="text-[9px] font-bold text-slate-400">#{hoverCase.id}</span></div>
+        <p className="text-[11px] font-bold leading-snug max-w-[180px]">{hoverCase.title}</p>
+      </div>)}
+    <div className="absolute bottom-3 right-3 glass rounded-2xl px-3.5 py-2.5 text-[10px] font-semibold text-slate-600 space-y-1 shadow-lg">
+      {[['#ef4444','Critical'],['#f59e0b','Urgent'],['#eab308','Need'],['#3b82f6','Volunteer'],['#8b5cf6','NGO'],['#10b981','Resolved']].map(([c,l])=>(
+        <div key={l} className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full" style={{background:c}}/>{l}</div>))}
+    </div>
+  </div>);
+};
+
+/* ============================== EXPLORE DASHBOARD ============================== */
+const PULSE_POOL = [
+  {icon:'🟠', txt:'New urgent report: streetlight failure — Hillcrest Rd'},
+  {icon:'🔵', txt:'Nina Costa came online · Elderly Care volunteer'},
+  {icon:'🟣', txt:'HealthBridge NGO offered 20 first-aid kits'},
+  {icon:'🟢', txt:'Case CV-2034 verified resolved by the community'},
+  {icon:'🧠', txt:'CIVORA Insight: flood pattern confidence rose to 91%'},
+  {icon:'🤝', txt:'3 volunteers joined the food distribution drive'},
+  {icon:'🟡', txt:'New community need: blankets — Pune Station area'},
+  {icon:'🔴', txt:'Blood request escalated to a 2 km donor radius'}
+];
+const Explore = ({cases, vols, orgs, openCase, go, stats, enterEmergency, role, acceptCase}) => {
+  const [filter,setFilter] = useState({cat:'All', sev:null, q:''});
+  const [sel,setSel] = useState(null);
+  const [area,setArea] = useState(0);
+  const AREAS = ['Deccan · Pune','Kothrud · Pune','Camp · Pune'];
+  const [feed,setFeed] = useState([
+    {icon:'🔴', txt:'Critical: fallen tree blocking FC Road', caseId:'CV-2047'},
+    {icon:'🟣', txt:'ShelterFirst Foundation accepted case CV-2043'},
+    {icon:'🔵', txt:'Dr. Aditi Rao is available nearby · Medical'},
+    {icon:'🧠', txt:'CIVORA linked 3 flooding reports on DP Road'},
+    {icon:'🟢', txt:'CV-2031 resolved — medicines delivered & verified'}]);
+  useEffect(()=>{ let i=0; const t=setInterval(()=>{
+      setFeed(f=>[{...PULSE_POOL[i%PULSE_POOL.length], id:uid()}, ...f].slice(0,9)); i++;
+    }, 9000); return ()=>clearInterval(t); },[]);
+  const selCase = cases.find(c=>c.id===sel);
+  const critical = cases.filter(c=>c.severity==='critical' && c.status!=='resolved');
+  const activeCount = cases.filter(c=>c.status!=='resolved').length;
+  const helpingNow = cases.reduce((a,c)=>a+(c.status==='in_progress'?(c.responders||[]).length:0),0);
+  const FILTERS = ['All','Critical','Medical','Food','Shelter','Safety','Infrastructure','Environment','Education','Elderly','Accessibility','Animal Welfare'];
+  const ROLE_LINE = { citizen:'See what is happening around you — and report what needs attention.',
+    volunteer:'These are the needs closest to your skills. Pick one and make a difference.',
+    organization:'Operational view of live cases, your teams and resource gaps.' };
+  return (
+  <div className="fade-in">
+    <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="relative flex-1 min-w-[240px]">
+        <I n="search" s={16} c="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"/>
+        <input className="field pl-11" placeholder="Search nearby needs, organizations, or people…" value={filter.q} onChange={e=>setFilter({...filter,q:e.target.value})}/>
+      </div>
+      <button className="btn-o px-4 py-2.5 text-xs flex items-center gap-2" onClick={()=>setArea((area+1)%AREAS.length)}><I n="locate-fixed" s={14}/>{AREAS[area]}<I n="chevron-down" s={13}/></button>
+      <button className="btn-p px-4 py-2.5 text-xs flex items-center gap-2" onClick={()=>go('report')}><I n="plus" s={14}/>Report</button>
+    </div>
+    <div className="flex gap-2 overflow-x-auto pb-3 mb-1">
+      {FILTERS.map(f=>(
+        <button key={f} onClick={()=>setFilter({...filter, cat: f==='Critical'?'All':f, sev: f==='Critical'?'critical':null})}
+          className={`tabbtn border ${(f==='Critical'&&filter.sev==='critical')||(filter.cat===f&&!filter.sev)||(f==='All'&&filter.cat==='All'&&!filter.sev)?'on border-transparent':'bg-white border-slate-200'}`}>
+          {f==='Critical'?'🔴 Critical':f}</button>))}
+    </div>
+    <div className="grid xl:grid-cols-3 gap-5">
+      <div className="xl:col-span-2 relative">
+        {/* floating contextual header */}
+        <div className="absolute top-4 left-4 z-30 glass rounded-2xl px-4 py-3 shadow-xl max-w-[300px] fade-in">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-ok animate-pulse"/>
+            <p className="eyebrow">COMMUNITY PULSE</p>
+          </div>
+          <p className="h2 text-[15px] mt-1">{activeCount} active needs around you</p>
+          <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">{ROLE_LINE[role]||ROLE_LINE.citizen}</p>
+          <div className="flex gap-3 mt-2 text-[10px] font-bold text-slate-500">
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-crit"/>{critical.length} critical</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-vol"/>{helpingNow} helping now</span>
+          </div>
+        </div>
+        <MapView cases={cases} vols={vols} orgs={orgs} filter={filter} selected={sel}
+          onSelect={id=>setSel(id===sel?null:id)}/>
+        {selCase && (
+          <div className="absolute left-4 bottom-4 map-pop card p-4 w-[310px] rise shadow-2xl z-30">
+            <div className="flex items-center gap-1.5 flex-wrap mb-1.5"><SevChip sev={selCase.severity}/><StatusChip st={selCase.status}/><span className="text-[9px] font-bold text-slate-400">#{selCase.id}</span></div>
+            <p className="font-bold text-sm leading-snug">{selCase.title}</p>
+            <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-500">
+              <span className="flex items-center gap-1"><I n="map-pin" s={11}/>{km(selCase)} km</span>
+              <span className="flex items-center gap-1"><I n="clock" s={11}/>{selCase.time}</span>
+              <span className="flex items-center gap-1"><I n="users" s={11}/>{(selCase.responders||[]).length} responding</span>
+            </div>
+            <div className="flex items-center justify-between mt-2.5">
+              <span className="flex items-center gap-1.5 text-[11px] font-bold" style={{color:selCase.trust>=85?'#10b981':'#f59e0b'}}><I n="shield-check" s={12}/>Trust {selCase.trust}%</span>
+              <CatTag cat={selCase.category}/>
+            </div>
+            <div className="flex gap-2 mt-3">
+              {['open','matching'].includes(selCase.status) &&
+                <button className="btn-g flex-1 py-2.5 text-xs" onClick={()=>acceptCase(selCase.id)}>I CAN HELP</button>}
+              <button className="btn-p flex-1 py-2.5 text-xs" onClick={()=>openCase(selCase.id)}>Open Case →</button>
+            </div>
+          </div>)}
+      </div>
+      <div className="card p-5 flex flex-col" style={{maxHeight:620}}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="h2 text-sm flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-crit pulse-dot"/>Live Community Pulse</h3>
+          <span className="chip bg-ok/10 text-ok blink">LIVE</span>
+        </div>
+        {critical.length>0 && (
+          <button onClick={enterEmergency} className="w-full text-left rounded-2xl p-3.5 mb-3 border border-crit/25 hover:shadow-lg" style={{background:'linear-gradient(135deg,#fef2f2,#fff7ed)'}}>
+            <p className="text-[11px] font-extrabold text-crit flex items-center gap-1.5"><I n="siren" s={13}/>{critical.length} CRITICAL ALERT{critical.length>1?'S':''} ACTIVE</p>
+            <p className="text-xs font-semibold mt-1 leading-snug">{critical[0].title}</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Tap to enter Emergency Mode →</p>
+          </button>)}
+        <div className="flex-1 overflow-y-auto space-y-1 pr-1">
+          {feed.map((f,i)=>(
+            <div key={f.id||i} onClick={()=>f.caseId&&openCase(f.caseId)}
+              className={`flex gap-2.5 items-start p-2.5 rounded-xl ${i===0?'fade-in bg-slate-50':'hover:bg-slate-50'} ${f.caseId?'cursor-pointer':''}`}>
+              <span className="text-sm leading-none mt-0.5">{f.icon}</span>
+              <p className="text-[12px] text-slate-600 leading-snug">{f.txt}</p>
+            </div>))}
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-100 text-center">
+          {[['🔴',critical.length,'Critical'],['🟠',cases.filter(c=>c.severity==='urgent'&&c.status!=='resolved').length,'Urgent'],['🟢',cases.filter(c=>c.status==='resolved').length,'Resolved']].map(([e,v,l])=>(
+            <div key={l} className="rounded-xl bg-slate-50 py-2"><p className="h1 text-base">{e} {v}</p><p className="text-[9px] font-bold text-slate-400 tracking-wider">{l.toUpperCase()}</p></div>))}
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== REPORT FLOW + AI + MATCH ============================== */
+const inferReport = (d, chosenCat) => {
+  const s=(d||'').toLowerCase();
+  if(/blood/.test(s)) return {cat:'Blood',sev:'critical',det:'Urgent blood requirement detected'};
+  if(/accident|unconscious|heart|bleed|injur|ambulance|collapse/.test(s)) return {cat:'Medical',sev:'critical',det:'Medical emergency indicators'};
+  if(/fire|smoke|gas|explosion/.test(s)) return {cat:'Disaster',sev:'critical',det:'Fire / hazard indicators'};
+  if(/flood|water|drain|overflow|waterlog/.test(s)) return {cat:'Infrastructure',sev:'urgent',det:'Severe waterlogging — blocked drainage'};
+  if(/tree|road|block|wire|pole/.test(s)) return {cat:'Safety',sev:'urgent',det:'Large road obstruction'};
+  if(/dog|cat|animal|puppy|bird/.test(s)) return {cat:'Animal Welfare',sev:'urgent',det:'Animal in distress'};
+  if(/elderly|old man|old woman|senior|grandpa|grandma/.test(s)) return {cat:'Elderly',sev:'urgent',det:'Elderly person needs assistance'};
+  if(/food|hunger|meal|starving/.test(s)) return {cat:'Food',sev:'normal',det:'Food assistance requirement'};
+  if(/shelter|homeless|blanket|cold/.test(s)) return {cat:'Shelter',sev:'urgent',det:'Shelter requirement'};
+  if(/wheelchair|ramp|blind|deaf|disab/.test(s)) return {cat:'Accessibility',sev:'normal',det:'Accessibility barrier'};
+  if(/garbage|waste|plastic|trash|pollution/.test(s)) return {cat:'Environment',sev:'urgent',det:'Sanitation / pollution hazard'};
+  return {cat:chosenCat||'Other',sev:'normal',det:'Community assistance request'};
+};
+
+const AI_STEPS = [
+  {t:'UNDERSTANDING REPORT', s:'Input analyzed', icon:'scan-text'},
+  {t:'IDENTIFYING NEED', s:'Category detected', icon:'tag'},
+  {t:'ASSESSING URGENCY', s:'Severity estimated', icon:'gauge'},
+  {t:'CHECKING COMMUNITY SIGNALS', s:'Related reports analyzed', icon:'radio'},
+  {t:'FINDING SUPPORT', s:'Nearby resources identified', icon:'radar'}
+];
+
+const ReportFlow = ({createCase, matchNotify, openCase, vols, orgs}) => {
+  const [step,setStep] = useState(0);
+  const [desc,setDesc] = useState('');
+  const [files,setFiles] = useState([]);
+  const [loc,setLoc] = useState(null);
+  const [approx,setApprox] = useState(true);
+  const [anon,setAnon] = useState(false);
+  const [cat,setCat] = useState(null);
+  const [phase,setPhase] = useState('form'); // form | analyzing | review | matched
+  const [aiStep,setAiStep] = useState(0);
+  const [ai,setAi] = useState(null);
+  const [recording,setRecording] = useState(false);
+  const [editSev,setEditSev] = useState(null);
+  const [editCat,setEditCat] = useState(null);
+  const [newCase,setNewCase] = useState(null);
+  const [whyOpen,setWhyOpen] = useState(false);
+  const [netDone,setNetDone] = useState(false);
+  const imgRef = useRef(); const vidRef = useRef();
+
+  const addFiles = (fl, type) => { const arr=[...fl].slice(0,3).map(f=>({name:f.name,type})); if(arr.length) setFiles(p=>[...p,...arr].slice(0,4)); };
+  const toggleRec = () => { if(recording){ setRecording(false); setFiles(p=>[...p,{name:'Voice note · 0:12',type:'voice'}]); } else setRecording(true); };
+
+  const runAI = () => {
+    setPhase('analyzing'); setAiStep(0);
+    AI_STEPS.forEach((_,i)=> setTimeout(()=>setAiStep(i), i*900));
+    setTimeout(()=>{
+      const inf = inferReport(desc, cat);
+      const trust = Math.min(97, 80 + files.length*4 + (loc?4:0) + Math.floor(Math.random()*5));
+      setAi({ ...inf, conf: 87+Math.floor(Math.random()*10), trust,
+        impact: inf.sev==='critical'?'High — immediate risk to people':(inf.sev==='urgent'?'Moderate–High':'Localized community impact'),
+        action: inf.sev==='critical' ? 'Immediate volunteer dispatch + authority notification' : 'Community verification + local authority notification',
+        trustState: trust>=85?'verified':(trust>=70?'confirm':'review'),
+        breakdown:[['Evidence',80+files.length*5],['Location',loc?93:60],['Report history',86],['Duplicates',95],['Community confirmation',78]]
+      });
+      setEditSev(inf.sev); setEditCat(inf.cat);
+      setPhase('review');
+    }, AI_STEPS.length*900+600);
+  };
+
+  const submit = () => {
+    const c = createCase({desc, files, loc, approx, anon, cat:editCat, sev:editSev, ai});
+    setNewCase(c); setPhase('matched'); setNetDone(false);
+    setTimeout(()=>setNetDone(true), 2400);
+  };
+
+  const matches = useMemo(()=>{
+    if(!newCase) return {vm:[],om:[]};
+    const skillMap = {Medical:['Medical','Nursing','First Aid'],Blood:['Medical','Nursing'],Elderly:['Elderly Care','Counseling'],'Animal Welfare':['Animal Rescue'],Infrastructure:['Construction','Electrical Repair'],Shelter:['Logistics & Riding','Counseling'],Food:['Food Distribution'],Education:['Teaching'],Environment:['Construction','Food Distribution'],Accessibility:['Sign Language','Elderly Care'],Safety:['Search & Rescue','First Aid'],Disaster:['Search & Rescue','First Aid']};
+    const want = skillMap[newCase.category]||[];
+    const vm = vols.filter(v=>v.available).map(v=>{
+      let score = 100 - v.dist*8;
+      if(want.includes(v.skill)) score += 30;
+      score += (v.reliability-90)*1.2;
+      return {...v, score:Math.round(Math.min(99,score)), matchSkill: want.includes(v.skill)};
+    }).sort((a,b)=>b.score-a.score).slice(0,3);
+    const om = orgs.map(o=>({...o, score: 90 - o.dist*6 + (o.focus.toLowerCase().includes(newCase.category.toLowerCase().split(' ')[0])?25:0)})).sort((a,b)=>b.score-a.score).slice(0,2);
+    return {vm, om};
+  },[newCase]);
+
+  const STEPS = ['What happened?','Where?','Type of help','AI Review'];
+
+  return (
+  <div className="max-w-3xl mx-auto fade-in">
+    <div className="flex items-center gap-2 mb-6">
+      {STEPS.map((s,i)=>(
+        <React.Fragment key={s}>
+          <div className="flex items-center gap-2">
+            <span className={`step-dot ${i<step||phase!=='form'?'done':i===step?'on':''}`}>{i<step||phase!=='form'?<I n="check" s={14}/>:i+1}</span>
+            <span className={`text-[11px] font-bold hidden sm:block ${i===step?'text-ink':'text-slate-400'}`}>{s}</span>
+          </div>
+          {i<3 && <span className="flex-1 h-0.5 rounded bg-slate-200 overflow-hidden"><span className="block h-full bg-ok transition-all duration-500" style={{width: i<step||phase!=='form'?'100%':'0'}}/></span>}
+        </React.Fragment>))}
+    </div>
+
+    {phase==='form' && step===0 && (
+      <div className="card p-6 md:p-8 fade-in">
+        <p className="eyebrow mb-2">STEP 1 · WHAT HAPPENED</p>
+        <h2 className="h1 text-2xl md:text-3xl">How can CIVORA help?</h2>
+        <p className="text-sm text-slate-500 mt-2 mb-5">Tell it like you'd tell a neighbor. CORA will understand the rest.</p>
+        <textarea className="field min-h-[130px] text-[15px]" placeholder="e.g. Water is rising fast on DP Road near Deccan Gymkhana — a scooter just skidded and the drain looks completely blocked…" value={desc} onChange={e=>setDesc(e.target.value)}/>
+        <div className="flex flex-wrap gap-2.5 mt-4">
+          <input ref={imgRef} type="file" accept="image/*" multiple hidden onChange={e=>addFiles(e.target.files,'image')}/>
+          <input ref={vidRef} type="file" accept="video/*" hidden onChange={e=>addFiles(e.target.files,'video')}/>
+          <button className="btn-o px-4 py-2.5 text-xs flex items-center gap-2" onClick={()=>imgRef.current.click()}><I n="image" s={14}/>Add Photos</button>
+          <button className="btn-o px-4 py-2.5 text-xs flex items-center gap-2" onClick={()=>vidRef.current.click()}><I n="video" s={14}/>Add Video</button>
+          <button className={`px-4 py-2.5 text-xs flex items-center gap-2 rounded-[14px] font-semibold ${recording?'bg-crit text-white':'btn-o'}`} onClick={toggleRec}>
+            <I n="mic" s={14}/>{recording?'● Recording… tap to stop':'Voice Input'}</button>
+        </div>
+        {files.length>0 && <div className="flex flex-wrap gap-2 mt-4">
+          {files.map((f,i)=>(<span key={i} className="chip bg-slate-100 text-slate-600 inline-flex items-center gap-1.5 py-1.5"><I n={f.type==='image'?'image':f.type==='video'?'video':'mic'} s={11}/>{f.name}<button onClick={()=>setFiles(files.filter((_,j)=>j!==i))}><I n="x" s={11}/></button></span>))}
+        </div>}
+        <div className="flex justify-end mt-7">
+          <button className="btn-p px-7 py-3.5 text-sm flex items-center gap-2 disabled:opacity-40" disabled={!desc.trim() && !files.length} onClick={()=>setStep(1)}>Continue <I n="arrow-right" s={15}/></button>
+        </div>
+      </div>)}
+
+    {phase==='form' && step===1 && (
+      <div className="card p-6 md:p-8 fade-in">
+        <p className="eyebrow mb-2">STEP 2 · WHERE</p>
+        <h2 className="h1 text-2xl md:text-3xl">Where is it happening?</h2>
+        <p className="text-sm text-slate-500 mt-2 mb-5">Tap the map to drop a pin — approximate is fine, privacy comes first.</p>
+        <div className="relative h-[260px] rounded-2xl mapgrid overflow-hidden border border-slate-200 cursor-crosshair" style={{background:'linear-gradient(135deg,#eef3fb,#eafaf2)'}}
+          onClick={e=>{ const r=e.currentTarget.getBoundingClientRect(); setLoc({x:Math.round((e.clientX-r.left)/r.width*100), y:Math.round((e.clientY-r.top)/r.height*100)}); }}>
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,40 C30,36 60,48 100,42" stroke="#c2cfe4" strokeWidth="1.6" fill="none"/><path d="M30,0 C34,30 28,70 36,100" stroke="#ccd7ea" strokeWidth="1.2" fill="none"/></svg>
+          {loc && <span className="absolute -translate-x-1/2 -translate-y-full" style={{left:loc.x+'%',top:loc.y+'%'}}>
+            <span className="pulse-dot absolute inset-0 rounded-full"/><I n="map-pin" s={30} c="text-crit relative" st={{filter:'drop-shadow(0 4px 6px rgba(0,0,0,.3))'}}/></span>}
+          {!loc && <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-slate-400 pointer-events-none tracking-widest">TAP TO SET LOCATION</span>}
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5 mt-4">
+          <button className="btn-o px-4 py-2.5 text-xs flex items-center gap-2" onClick={()=>setLoc({x:52,y:46})}><I n="locate-fixed" s={14}/>Use Current Location</button>
+          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer"><input type="checkbox" checked={approx} onChange={e=>setApprox(e.target.checked)} className="accent-emerald-500 w-4 h-4"/>Approximate location (privacy)</label>
+          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer"><input type="checkbox" checked={anon} onChange={e=>setAnon(e.target.checked)} className="accent-emerald-500 w-4 h-4"/>Report anonymously</label>
+        </div>
+        <p className="text-[11px] text-slate-400 mt-3 flex items-center gap-1.5"><I n="lock" s={11}/>Your Privacy Matters — exact addresses are never exposed publicly.</p>
+        <div className="flex justify-between mt-7">
+          <button className="btn-o px-5 py-3 text-sm" onClick={()=>setStep(0)}>Back</button>
+          <button className="btn-p px-7 py-3.5 text-sm flex items-center gap-2 disabled:opacity-40" disabled={!loc} onClick={()=>setStep(2)}>Continue <I n="arrow-right" s={15}/></button>
+        </div>
+      </div>)}
+
+    {phase==='form' && step===2 && (
+      <div className="card p-6 md:p-8 fade-in">
+        <p className="eyebrow mb-2">STEP 3 · TYPE OF HELP</p>
+        <h2 className="h1 text-2xl md:text-3xl">What kind of help is needed?</h2>
+        <p className="text-sm text-slate-500 mt-2 mb-5">Pick the closest one — CORA will verify it against your description.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {[...CATS,'Other'].map(c=>(
+            <button key={c} className={`catcard ${cat===c?'on':''}`} onClick={()=>setCat(c)}>
+              <span className="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style={{background:(cat===c?'#ffffff22':CAT_COLOR[c]+'14'), color:(cat===c?'#fff':CAT_COLOR[c])}}><I n={CAT_ICON[c]} s={17}/></span>
+              <p className="text-[13px] font-bold leading-tight">{c}</p>
+              <p className={`text-[10px] mt-0.5 leading-snug ${cat===c?'text-white/60':'text-slate-400'}`}>{CAT_DESC[c]}</p>
+            </button>))}
+        </div>
+        <div className="flex justify-between mt-7">
+          <button className="btn-o px-5 py-3 text-sm" onClick={()=>setStep(1)}>Back</button>
+          <button className="btn-ai px-7 py-3.5 text-sm flex items-center gap-2 disabled:opacity-40" disabled={!cat} onClick={runAI}>
+            <I n="sparkles" s={15}/>Analyze with AI</button>
+        </div>
+      </div>)}
+
+    {phase==='analyzing' && (
+      <div className="card p-8 md:p-10 fade-in">
+        <div className="flex items-center gap-3 mb-8">
+          <span className="relative w-12 h-12 flex items-center justify-center">
+            <span className="absolute inset-0 rounded-2xl spin-slow" style={{background:'conic-gradient(#a855f7,#6366f1,#10b981,#a855f7)', WebkitMask:'radial-gradient(circle, transparent 56%, black 58%)', mask:'radial-gradient(circle, transparent 56%, black 58%)'}}/>
+            <span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="brain" s={15}/></span>
+          </span>
+          <div><h2 className="h1 text-xl">CORA is analyzing your report</h2>
+          <p className="text-xs text-slate-500">Understanding context, signals and support options…</p></div>
+        </div>
+        <div className="space-y-1 max-w-lg">
+          {AI_STEPS.map((s,i)=>(
+            <div key={s.t} className={`flex items-center gap-4 p-3 rounded-2xl transition-all duration-500 ${i===aiStep?'bg-ai/5 border border-ai/15':'border border-transparent'} ${i>aiStep?'opacity-35':''}`}>
+              <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${i<aiStep?'bg-ok text-white':i===aiStep?'text-white':'bg-slate-100 text-slate-400'}`} style={i===aiStep?{background:'linear-gradient(135deg,#a855f7,#6366f1)'}:{}}>
+                {i<aiStep?<I n="check" s={15}/>:i===aiStep?<span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent spin-fast"/>:<I n={s.icon} s={15}/>}
+              </span>
+              <div className="flex-1">
+                <p className={`text-[11px] font-extrabold tracking-wider ${i<=aiStep?'text-ink':'text-slate-400'}`}>{s.t}</p>
+                {i<aiStep && <p className="text-[11px] text-ok font-semibold flex items-center gap-1">✓ {s.s}</p>}
+                {i===aiStep && <p className="text-[11px] text-ai font-semibold">Processing…</p>}
+              </div>
+            </div>))}
+        </div>
+        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-6 max-w-lg">
+          <div className="h-full rounded-full transition-all duration-700" style={{width:((aiStep+1)/(AI_STEPS.length+1)*100)+'%', background:'linear-gradient(90deg,#a855f7,#6366f1,#10b981)'}}/>
+        </div>
+      </div>)}
+
+    {phase==='review' && ai && (
+      <div className="fade-in space-y-5">
+        <div className="card p-6 md:p-7 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1" style={{background:'linear-gradient(90deg,#a855f7,#6366f1,#10b981)'}}/>
+          <div className="flex items-center gap-2 mb-5"><span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="sparkles" s={15}/></span>
+            <h2 className="h2 text-lg">AI Understanding</h2>
+            <span className="chip bg-ai/10 text-ai ml-auto">Confidence {ai.conf}%</span></div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="eyebrow mb-1.5">CATEGORY</p>
+              <select className="field !py-2 text-sm font-bold" value={editCat} onChange={e=>setEditCat(e.target.value)}>{[...CATS,'Other'].map(c=><option key={c}>{c}</option>)}</select>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="eyebrow mb-1.5">SEVERITY</p>
+              <div className="flex gap-2">{['critical','urgent','normal'].map(sv=>(
+                <button key={sv} onClick={()=>setEditSev(sv)} className="chip border" style={editSev===sv?{background:SEV[sv].c,color:'#fff',borderColor:'transparent'}:{color:SEV[sv].c,borderColor:SEV[sv].c+'44'}}>{SEV[sv].label}</button>))}</div>
+            </div>
+            {[['Detected',ai.det,'scan-search'],['Potential impact',ai.impact,'trending-up'],['Recommended action',ai.action,'list-checks']].map(([l,v,ic])=>(
+              <div key={l} className="rounded-2xl bg-slate-50 p-4 sm:col-span-2 flex gap-3 items-start">
+                <I n={ic} s={16} c="text-ai mt-0.5 shrink-0"/><div><p className="eyebrow">{l.toUpperCase()}</p><p className="text-sm font-semibold mt-0.5">{v}</p></div>
+              </div>))}
+          </div>
+        </div>
+
+        {/* Trust Score — hero element */}
+        <div className="card p-6 md:p-7">
+          <div className="flex flex-wrap items-center gap-8">
+            <div className="text-center reveal">
+              <p className="h1 text-6xl" style={{color:ai.trust>=85?'#10b981':'#f59e0b'}}><Counter to={ai.trust} dur={1400}/></p>
+              <p className="eyebrow mt-1">TRUST SCORE</p>
+              <div className="mt-2"><TrustChip ts={ai.trustState}/></div>
+            </div>
+            <div className="flex-1 min-w-[240px]">
+              <div className="flex items-center justify-between mb-3">
+                <p className="h2 text-sm">Why this score?</p>
+                <button className="text-[11px] font-bold text-ai hover:underline" onClick={()=>setWhyOpen(!whyOpen)}>{whyOpen?'Hide explanation':'How CIVORA scores trust'}</button>
+              </div>
+              {whyOpen && <p className="text-[11px] text-slate-500 leading-relaxed mb-3 bg-slate-50 rounded-xl p-3 fade-in">CIVORA combines media evidence, location consistency, reporter history, duplicate detection and live community confirmation. Sensitive cases always require human confirmation — AI never auto-resolves serious incidents.</p>}
+              <div className="space-y-2.5">{ai.breakdown.map(([l,v],i)=>(
+                <div key={l} className="flex items-center gap-3 fade-in" style={{animationDelay:(0.25+i*0.18)+'s'}}>
+                  <span className="w-40 text-[11px] text-slate-500 font-medium">{l}</span>
+                  <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-1000" style={{width:v+'%',background:v>=80?'#10b981':v>=60?'#f59e0b':'#ef4444', transitionDelay:(i*0.15)+'s'}}/></div>
+                  <span className="text-[11px] font-bold w-7 text-right">{v}</span></div>))}</div>
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-400 mt-5 flex items-center gap-1.5 bg-slate-50 rounded-xl p-3"><I n="shield-check" s={13} c="text-ok shrink-0"/>Human-in-the-loop: a person always confirms before sensitive cases are closed.</p>
+        </div>
+
+        <div className="flex justify-between">
+          <button className="btn-o px-5 py-3 text-sm flex items-center gap-2" onClick={()=>{setPhase('form'); setStep(0);}}><I n="edit" s={14}/>Edit Report</button>
+          <button className="btn-g px-7 py-3.5 text-sm flex items-center gap-2" onClick={submit}><I n="send" s={15}/>Submit Report</button>
+        </div>
+      </div>)}
+
+    {phase==='matched' && newCase && (
+      <div className="fade-in space-y-5">
+        {/* MATCH network animation */}
+        <div className="card p-6 md:p-8 relative overflow-hidden">
+          <p className="eyebrow text-center">CIVORA MATCH</p>
+          <h2 className="h1 text-2xl text-center mt-1">{netDone?'The right people, found.':'Finding the right people…'}</h2>
+          <div className="relative mx-auto mt-6" style={{width:320, height:230}}>
+            <svg width="320" height="230" className="absolute inset-0">
+              {[['M160 115 L70 45',0],['M160 115 L250 45',0.3],['M160 115 L70 185',0.6],['M160 115 L250 185',0.9]].map(([d,del],i)=>(
+                <path key={i} d={d} stroke="#c7b8f0" strokeWidth="2" fill="none" className="line-draw" style={{animationDelay:del+'s'}}/>))}
+            </svg>
+            <span className="absolute node-pop" style={{left:132, top:87}}>
+              <span className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl ring-4 ring-white" style={{background:'#0f1b2d'}}><I n={CAT_ICON[newCase.category]||'map-pin'} s={22}/></span>
+              <p className="text-[9px] font-extrabold text-center mt-1 tracking-wider">CASE</p>
+            </span>
+            {[{x:46,y:16,icon:'heart-handshake',c:'#3b82f6',l:'VOLUNTEER',d:.4},{x:226,y:16,icon:'building',c:'#8b5cf6',l:'NGO',d:.7},{x:46,y:156,icon:'package',c:'#f59e0b',l:'RESOURCE',d:1.0},{x:226,y:156,icon:'landmark',c:'#10b981',l:'AUTHORITY',d:1.3}].map(n=>(
+              <span key={n.l} className="absolute node-pop text-center" style={{left:n.x, top:n.y, animationDelay:n.d+'s'}}>
+                <span className="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-lg ring-4 ring-white inline-flex" style={{background:n.c}}><I n={n.icon} s={17}/></span>
+                <p className="text-[9px] font-extrabold mt-1 tracking-wider text-slate-500">{n.l}</p>
+              </span>))}
+          </div>
+          {netDone && matches.vm[0] && (
+            <div className="reveal mt-2 max-w-md mx-auto rounded-2xl border-2 border-ai/30 p-4" style={{background:'linear-gradient(135deg,#faf5ff,#eef2ff)'}}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="chip bg-ai text-white">BEST MATCH</span>
+                <span className="h1 text-2xl text-ai">{matches.vm[0].score}% <span className="text-[10px] font-bold text-slate-400 tracking-wider">MATCH</span></span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Av name={matches.vm[0].name} color={matches.vm[0].color} s={44}/>
+                <div className="flex-1"><p className="font-bold text-sm">{matches.vm[0].name}</p>
+                  <p className="text-[11px] text-slate-500">{matches.vm[0].skill} · {matches.vm[0].dist} km · ★{matches.vm[0].rating}</p></div>
+                <span className="chip bg-ok/10 text-ok">Available now</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {[`${matches.vm[0].dist} km away`,'Skill match',`${matches.vm[0].reliability}% reliability`,'Responds in ~6 min'].map(r=>(
+                  <span key={r} className="chip bg-white border border-ai/20 text-slate-600">{r}</span>))}
+              </div>
+            </div>)}
+        </div>
+
+        {netDone && (
+        <div className="card p-6 fade-in">
+          <div className="flex items-center gap-2 mb-4"><span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="git-merge" s={15}/></span>
+            <h3 className="h2">Ranked candidates</h3><span className="chip bg-slate-100 text-slate-500">distance · skills · availability · reliability</span></div>
+          <div className="space-y-3">
+            {matches.vm.map((v,i)=>(
+              <div key={v.id} className={`flex items-center gap-3.5 p-3.5 rounded-2xl border hover:shadow-md ${i===0?'border-ai/40 bg-ai/5':'border-slate-100'}`}>
+                <span className="w-6 text-center h1 text-lg" style={{color:i===0?'#a855f7':'#cbd5e1'}}>{i+1}</span>
+                <Av name={v.name} color={v.color} s={40}/>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold">{v.name} {v.matchSkill && <span className="chip bg-ok/10 text-ok ml-1">Skill match</span>}</p>
+                  <p className="text-[11px] text-slate-500">{v.skill} Volunteer · {v.dist} km · <span className="text-ok font-semibold">Available now</span></p>
+                </div>
+                <div className="text-right shrink-0"><p className="text-sm font-extrabold text-ai">{v.score}%</p><p className="text-[10px] text-slate-400">★ {v.rating} · {v.reliability}%</p></div>
+              </div>))}
+            {matches.om.map(o=>(
+              <div key={o.id} className="flex items-center gap-3.5 p-3.5 rounded-2xl border border-slate-100 hover:shadow-md">
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-white" style={{background:'#8b5cf6'}}><I n="building" s={17}/></span>
+                <div className="flex-1 min-w-0"><p className="text-sm font-bold">{o.name}</p><p className="text-[11px] text-slate-500">{o.focus} · {o.dist} km · {o.volunteers} volunteers</p></div>
+                <span className="chip bg-ok/10 text-ok">Available</span>
+              </div>))}
+          </div>
+          <button className="btn-ai w-full mt-5 py-4 text-sm flex items-center justify-center gap-2 shadow-lg"
+            onClick={()=>{ matchNotify(newCase.id); openCase(newCase.id); }}>
+            <I n="send" s={15}/>MATCH & NOTIFY</button>
+        </div>)}
+      </div>)}
+  </div>);
+};
+
+/* ============================== CASE DETAIL / RESPONSE ROOM ============================== */
+const CasePage = ({c, vols, orgs, acceptCase, markComplete, confirmResolution, matchNotify, back}) => {
+  if(!c) return null;
+  const canRespond = ['open','matching'].includes(c.status);
+  const hasMedia = (c.files||[]).some(f=>f.type==='image'||f.type==='video');
+  const active = ['in_progress','awaiting_confirmation'].includes(c.status);
+  const tasks = [
+    {l:'Report received & AI-verified', done:true},
+    {l:'Responder team assembled', done:(c.responders||[]).length>0},
+    {l:'Team en route to location', done:active || c.status==='resolved'},
+    {l:'Action completed on ground', done:['awaiting_confirmation','resolved'].includes(c.status)},
+    {l:'Resolution confirmed by community', done:c.status==='resolved'}
+  ];
+  const prog = tasks.filter(t=>t.done).length/tasks.length*100;
+  return (
+  <div className="fade-in space-y-5">
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <button className="btn-o px-4 py-2 text-xs flex items-center gap-2" onClick={back}><I n="arrow-left" s={14}/>Back</button>
+      {active && <span className="chip bg-urg/10 text-urg flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-urg animate-pulse"/>RESPONSE ROOM LIVE · {(c.responders||[]).length} responder{(c.responders||[]).length!==1?'s':''} active</span>}
+    </div>
+    <div className="grid lg:grid-cols-3 gap-5">
+      <div className="lg:col-span-2 space-y-5">
+        {/* CASE */}
+        <div className="card p-6">
+          <p className="eyebrow mb-2">CASE · #{c.id}</p>
+          <div className="flex items-center gap-2 flex-wrap mb-2"><SevChip sev={c.severity}/><StatusChip st={c.status}/><CatTag cat={c.category}/></div>
+          <h1 className="h1 text-2xl leading-tight">{c.title}</h1>
+          <p className="text-sm text-slate-600 mt-4 leading-relaxed">{c.desc}</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+            {[['map-pin',c.loc,'LOCATION'],['clock',c.time,'REPORTED'],['users',(c.responders||[]).length+' responding','TEAM'],['shield-check',c.trust+'% trust','TRUST SCORE']].map(([ic,v,l])=>(
+              <div key={l} className="rounded-2xl bg-slate-50 p-3"><I n={ic} s={14} c="text-slate-400"/><p className="text-xs font-bold mt-1.5 leading-snug">{v}</p><p className="eyebrow mt-0.5">{l}</p></div>))}
+          </div>
+          {hasMedia && <div className="flex gap-2.5 mt-4 flex-wrap">
+            {(c.files||[]).filter(f=>f.type!=='voice').map((f,i)=>(
+              <div key={i} className="w-24 h-24 rounded-2xl flex flex-col items-center justify-center text-white shadow-md" style={{background:'linear-gradient(135deg,#334155,#0f1b2d)'}}>
+                <I n={f.type==='video'?'video':'image'} s={22}/><span className="text-[9px] font-semibold mt-1.5 px-2 text-center truncate w-full">{f.name}</span></div>))}
+            {(c.files||[]).filter(f=>f.type==='voice').map((f,i)=>(
+              <div key={'v'+i} className="h-24 px-4 rounded-2xl flex items-center gap-2 bg-slate-100"><I n="mic" s={16} c="text-ai"/><div className="flex items-end gap-0.5 h-6">{[6,12,18,10,16,8,14,5].map((h,j)=><span key={j} className="w-1 rounded bg-ai/60" style={{height:h}}/>)}</div><span className="text-[10px] font-bold text-slate-500">{f.name}</span></div>))}
+          </div>}
+          {c.status==='resolved' && (
+            <div className="mt-5 rounded-2xl p-4 flex items-center gap-3 border border-ok/25" style={{background:'linear-gradient(135deg,#ecfdf5,#f0fdfa)'}}>
+              <I n="badge-check" s={22} c="text-ok"/><div><p className="text-sm font-bold text-ok">Resolved & verified</p><p className="text-[11px] text-slate-500">Confirmed by the reporter {c.resolvedAt?('· '+c.resolvedAt):''} — humans verified, AI recorded.</p></div>
+            </div>)}
+        </div>
+
+        {/* TASKS */}
+        <div className="card p-6">
+          <SectionHead icon="list-checks" title="Response Tasks" sub="Progress updates live as the team acts" color="#3b82f6"/>
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-4"><div className="h-full rounded-full transition-all duration-700" style={{width:prog+'%',background:'linear-gradient(90deg,#3b82f6,#10b981)'}}/></div>
+          <div className="space-y-2">
+            {tasks.map((t,i)=>(
+              <div key={i} className={`flex items-center gap-3 p-3 rounded-xl transition ${t.done?'bg-ok/5':'bg-slate-50'}`}>
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${t.done?'bg-ok text-white':'bg-white border-2 border-slate-200'}`}>{t.done && <I n="check" s={12}/>}</span>
+                <p className={`text-xs font-semibold ${t.done?'text-ink':'text-slate-400'}`}>{t.l}</p>
+              </div>))}
+          </div>
+        </div>
+
+        {/* TIMELINE */}
+        <div className="card p-6">
+          <SectionHead icon="activity" title="Activity Timeline" sub="Every step is recorded and auditable" color="#0ea5e9"/>
+          <div>
+            {c.timeline.map((t,i)=>(
+              <div key={i} className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${i===c.timeline.length-1?'text-white shadow-md':'bg-slate-100 text-slate-400'}`} style={i===c.timeline.length-1?{background:STATUS_META[c.status]?.c||'#0f1b2d'}:{}}><I n={t.icon} s={13}/></span>
+                  {i<c.timeline.length-1 && <span className="w-0.5 flex-1 bg-slate-100 my-1"/>}
+                </div>
+                <div className="pb-5"><p className="text-[10px] font-bold text-slate-400">{t.t}</p><p className="text-xs font-semibold mt-0.5">{t.txt}</p></div>
+              </div>))}
+          </div>
+        </div>
+      </div>
+
+      {/* right rail */}
+      <div className="space-y-5">
+        {/* TEAM */}
+        <div className="card p-5">
+          <SectionHead icon="users" title="Response Team" color="#10b981"/>
+          {(c.responders||[]).length===0 && <p className="text-xs text-slate-400">No responders yet — CIVORA MATCH is finding the best people.</p>}
+          <div className="space-y-2.5">
+            {(c.responders||[]).map((r,i)=>(
+              <div key={i} className="flex items-center gap-2.5 rise" style={{animationDelay:(i*0.15)+'s'}}>
+                <Av name={r.n} color={['#3b82f6','#8b5cf6','#10b981','#f59e0b'][i%4]} s={32}/>
+                <div className="flex-1"><p className="text-xs font-bold">{r.n}</p><p className="text-[10px] text-slate-400">{r.r}</p></div>
+                {active && <span className="w-2 h-2 rounded-full bg-ok pulse-soft"/>}
+              </div>))}
+          </div>
+          {c.org && <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'#8b5cf6'}}><I n="building" s={14}/></span>
+            <div><p className="text-xs font-bold">{c.org}</p><p className="text-[10px] text-slate-400">Organization support</p></div>
+          </div>}
+        </div>
+
+        {/* TRUST */}
+        <div className="card p-5">
+          <SectionHead icon="shield-check" title="Trust & Verification" color="#10b981"/>
+          <div className="flex items-center gap-3"><Ring pct={c.trust} size={74} stroke={8} color={c.trust>=85?'#10b981':'#f59e0b'}><p className="h1 text-lg">{c.trust}%</p></Ring>
+            <div><TrustChip ts={c.trustState}/><p className="text-[10px] text-slate-400 mt-1.5 leading-snug">Evidence · location · history · community confirmation</p></div></div>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="card p-5 space-y-2.5">
+          {canRespond && <>
+            <button className="btn-g w-full py-3 text-sm flex items-center justify-center gap-2" onClick={()=>acceptCase(c.id)}><I n="hand-helping" s={15}/>I CAN HELP — Accept Case</button>
+            <button className="btn-ai w-full py-3 text-sm flex items-center justify-center gap-2" onClick={()=>matchNotify(c.id)}><I n="sparkles" s={15}/>Run CIVORA MATCH</button>
+          </>}
+          {c.status==='in_progress' && <>
+            <button className="btn-p w-full py-3 text-sm flex items-center justify-center gap-2" onClick={()=>markComplete(c.id)}><I n="flag" s={15}/>MARK ACTION COMPLETE</button>
+            <p className="text-[10px] text-slate-400 text-center">Marks your action done — resolution still needs human confirmation.</p>
+          </>}
+          {c.status==='awaiting_confirmation' && <>
+            <button className="btn-g w-full py-3 text-sm flex items-center justify-center gap-2" onClick={()=>confirmResolution(c.id)}><I n="badge-check" s={15}/>CONFIRM RESOLUTION</button>
+            <p className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1"><I n="shield-check" s={11}/>Human confirmation required — AI never auto-resolves.</p>
+          </>}
+          {c.status==='resolved' && <div className="rounded-2xl bg-ok/10 text-ok text-xs font-bold p-3 text-center">✓ Another problem solved by the community.</div>}
+        </div>
+
+        <div className="card p-5">
+          <p className="eyebrow mb-2 flex items-center gap-1.5"><I n="lock" s={12}/>YOUR PRIVACY MATTERS</p>
+          <p className="text-[11px] text-slate-500 leading-relaxed">Approximate location only. No phone numbers, exact addresses, or unnecessary medical details are ever exposed.</p>
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== VOLUNTEER CENTER ============================== */
+const VolunteerCenter = ({cases, vols, acceptCase, openCase, profile, go}) => {
+  const [fDist,setFDist] = useState(5); const [fUrg,setFUrg] = useState('any'); const [fCat,setFCat] = useState('All');
+  const opps = cases.filter(c=>['open','matching'].includes(c.status))
+    .map(c=>({...c, d:+km(c)}))
+    .filter(c=> c.d<=fDist && (fUrg==='any'||c.severity===fUrg) && (fCat==='All'||c.category===fCat))
+    .sort((a,b)=> (a.severity==='critical'?0:a.severity==='urgent'?1:2)-(b.severity==='critical'?0:b.severity==='urgent'?1:2) || a.d-b.d);
+  const myActive = cases.filter(c=>c.status==='in_progress' && (c.responders||[]).some(r=>r.n==='You'));
+  return (
+  <div className="fade-in space-y-6">
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div><p className="eyebrow mb-1">VOLUNTEER CENTER</p>
+        <h1 className="h1 text-3xl">Make an impact <span className="grad-text">nearby</span>.</h1>
+        <p className="text-sm text-slate-500 mt-1">AI-matched opportunities based on your skills, distance and availability.</p></div>
+      <span className="chip bg-ok/10 text-ok inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-ok animate-pulse"/>Available now</span>
+    </div>
+
+    {myActive.length>0 && (
+      <div className="card p-5 border-l-4" style={{borderLeftColor:'#f59e0b'}}>
+        <p className="eyebrow text-urg mb-2">YOUR ACTIVE RESPONSE{myActive.length>1?'S':''}</p>
+        {myActive.map(c=>(
+          <button key={c.id} className="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50" onClick={()=>openCase(c.id)}>
+            <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white" style={{background:markerColor(c)}}><I n={CAT_ICON[c.category]||'map-pin'} s={15}/></span>
+            <div className="flex-1"><p className="text-sm font-bold">{c.title}</p><p className="text-[11px] text-slate-400">#{c.id} · Response Room is live</p></div>
+            <I n="chevron-right" s={15} c="text-slate-300"/>
+          </button>))}
+      </div>)}
+
+    <div className="card p-4 flex flex-wrap items-center gap-4">
+      <div className="flex items-center gap-2"><I n="locate-fixed" s={14} c="text-slate-400"/><span className="eyebrow">DISTANCE</span>
+        <input type="range" min="1" max="5" step="0.5" value={fDist} onChange={e=>setFDist(+e.target.value)} className="accent-violet-500 w-28"/><span className="text-xs font-bold">{fDist} km</span></div>
+      <div className="flex items-center gap-2"><I n="flame" s={14} c="text-slate-400"/><span className="eyebrow">URGENCY</span>
+        <select className="field !w-auto !py-1.5 text-xs" value={fUrg} onChange={e=>setFUrg(e.target.value)}><option value="any">Any</option><option value="critical">Critical</option><option value="urgent">Urgent</option><option value="normal">Normal</option></select></div>
+      <div className="flex items-center gap-2"><I n="wrench" s={14} c="text-slate-400"/><span className="eyebrow">SKILL</span>
+        <select className="field !w-auto !py-1.5 text-xs" value={fCat} onChange={e=>setFCat(e.target.value)}><option>All</option>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+      <span className="ml-auto chip bg-slate-100 text-slate-500">{opps.length} opportunities</span>
+    </div>
+
+    <div className="grid lg:grid-cols-3 gap-5">
+      <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
+        {opps.length===0 && <div className="card p-8 sm:col-span-2 text-center text-sm text-slate-400">No matching opportunities — widen your filters.</div>}
+        {opps.map(c=>(
+          <div key={c.id} className="card card-h p-5 flex flex-col">
+            <div className="flex items-center gap-2 mb-2 flex-wrap"><SevChip sev={c.severity}/><CatTag cat={c.category}/></div>
+            <p className="font-bold text-sm leading-snug flex-1">{c.title}</p>
+            <p className="text-[11px] text-slate-500 mt-2 flex items-center gap-1"><I n="map-pin" s={11}/>{c.d} km · {c.loc}</p>
+            <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1"><I n="timer" s={11}/>Est. {c.severity==='critical'?'15–30':c.severity==='urgent'?'30–60':'1–2 h'} min {(c.responders||[]).length>0 && `· ${c.responders.length} joined`}</p>
+            <div className="flex gap-2 mt-4">
+              <button className={`flex-1 py-2.5 text-xs rounded-[12px] font-bold ${c.severity==='critical'?'btn-g':'btn-p'}`} onClick={()=>acceptCase(c.id)}>{c.severity==='critical'?'I CAN HELP':'JOIN'}</button>
+              <button className="btn-o px-3.5 text-xs" onClick={()=>openCase(c.id)}><I n="eye" s={14}/></button>
+            </div>
+          </div>))}
+      </div>
+
+      <div className="card p-5 h-fit">
+        <div className="flex items-center gap-3 mb-4"><Av name="Alex Morgan" color="#0f1b2d" s={48}/><div>
+          <p className="h2">Alex Morgan</p>
+          <p className="text-[11px] text-slate-500">Verified Volunteer · First Aid, Logistics</p></div></div>
+        <div className="grid grid-cols-2 gap-2.5">
+          {[['badge-check',profile.actions,'Completed Actions','#10b981'],['heart-handshake',profile.helped,'People Helped','#ef4444'],['clock',profile.hours+' h','Hours Contributed','#3b82f6'],['building',4,'Organizations Supported','#8b5cf6']].map(([ic,v,l,c])=>(
+            <div key={l} className="rounded-2xl bg-slate-50 p-3 text-center"><I n={ic} s={15} c="mx-auto" st={{color:c}}/><p className="h1 text-lg mt-1">{v}</p><p className="eyebrow mt-0.5">{l.toUpperCase()}</p></div>))}
+        </div>
+        <div className="mt-4">
+          <div className="flex justify-between text-[11px] font-bold mb-1.5"><span className="eyebrow">RELIABILITY SCORE</span><span className="text-ok">{profile.reliability}%</span></div>
+          <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-1000" style={{width:profile.reliability+'%',background:'linear-gradient(90deg,#10b981,#0ea5e9)'}}/></div>
+        </div>
+        <div className="mt-4">
+          <p className="eyebrow mb-2">SKILLS</p>
+          <div className="flex flex-wrap gap-1.5">{['First Aid','Logistics','Elderly Care','Driving'].map(s=><span key={s} className="chip bg-vol/10 text-vol">{s}</span>)}</div>
+        </div>
+        <div className="mt-4">
+          <p className="eyebrow mb-2">IMPACT BADGES</p>
+          <div className="flex flex-wrap gap-1.5">{profile.badges.map(b=><BadgePill key={b} name={b}/>)}</div>
+          <p className="text-[10px] text-slate-400 mt-2">Badges celebrate contribution — never competition.</p>
+        </div>
+        <button className="btn-o w-full mt-4 py-2.5 text-xs" onClick={()=>go('profile')}>View Full Profile</button>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== ORGANIZATION CENTER ============================== */
+const OrgCenter = ({cases, vols, orgs, resources, openCase, acceptCase, toast}) => {
+  const [tab,setTab] = useState('cases');
+  const [needOpen,setNeedOpen] = useState(false);
+  const active = cases.filter(c=>c.status!=='resolved');
+  const crit = active.filter(c=>c.severity==='critical');
+  return (
+  <div className="fade-in space-y-6">
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div><p className="eyebrow mb-1">ORGANIZATION CENTER</p>
+        <h1 className="h1 text-3xl">CareBridge NGO</h1>
+        <p className="text-sm text-slate-500 mt-1">Operations view — cases, resources, volunteers & impact.</p></div>
+      <button className="btn-p px-5 py-3 text-sm flex items-center gap-2" onClick={()=>setNeedOpen(true)}><I n="plus" s={15}/>Create Need</button>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      {[['clipboard-list',active.length,'Active Cases','#3b82f6'],['siren',crit.length,'Critical Cases','#ef4444'],['users',vols.filter(v=>v.available).length,'Volunteers Available','#10b981'],['package',resources.filter(r=>r.status==='available').length,'Resources Ready','#8b5cf6'],['badge-check',cases.filter(c=>c.status==='resolved').length,'Resolved','#10b981'],['timer','14 min','Avg Response','#f59e0b']].map(([ic,v,l,c])=>(
+        <div key={l} className="card card-h p-4"><span className="w-9 h-9 rounded-xl inline-flex items-center justify-center" style={{background:c+'14',color:c}}><I n={ic} s={16}/></span>
+          <p className="h1 text-xl mt-2">{v}</p><p className="eyebrow mt-0.5">{l.toUpperCase()}</p></div>))}
+    </div>
+
+    <div className="flex gap-2">{[['cases','Active Cases'],['resources','Resources'],['volunteers','Volunteers'],['orgs','Partner Network']].map(([t,l])=>(
+      <button key={t} onClick={()=>setTab(t)} className={`tabbtn border ${tab===t?'on border-transparent':'bg-white border-slate-200'}`}>{l}</button>))}</div>
+
+    {tab==='cases' && (
+      <div className="card overflow-hidden">
+        <table className="w-full tbl">
+          <thead><tr><th>Case</th><th>Category</th><th>Severity</th><th>Status</th><th>Trust</th><th>Distance</th><th className="text-right">Actions</th></tr></thead>
+          <tbody>
+            {active.map(c=>(
+              <tr key={c.id}>
+                <td><button className="font-bold text-left hover:text-vol" onClick={()=>openCase(c.id)}>{c.title}</button><p className="text-[10px] text-slate-400">#{c.id} · {c.loc}</p></td>
+                <td><CatTag cat={c.category}/></td>
+                <td><SevChip sev={c.severity}/></td>
+                <td><StatusChip st={c.status}/></td>
+                <td><span className="font-bold text-xs" style={{color:c.trust>=85?'#10b981':'#f59e0b'}}>{c.trust}%</span></td>
+                <td className="text-xs font-semibold">{km(c)} km</td>
+                <td className="text-right whitespace-nowrap">
+                  <button className="chip bg-ink text-white mr-1.5 hover:opacity-80" onClick={()=>acceptCase(c.id)}>Accept</button>
+                  <button className="chip bg-ai/10 text-ai hover:bg-ai hover:text-white" onClick={()=>toast('🤖 Volunteer request sent','AI notified the best-matched volunteers for '+c.id,'#a855f7','send')}>Request Volunteers</button>
+                </td>
+              </tr>))}
+          </tbody>
+        </table>
+      </div>)}
+
+    {tab==='resources' && (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {resources.map(r=>(
+          <div key={r.id} className="card card-h p-5">
+            <div className="flex items-center justify-between"><span className="chip bg-ngo/10 text-ngo">{r.type}</span>
+              <span className={`chip ${r.status==='available'?'bg-ok/10 text-ok':r.status==='low'?'bg-urg/10 text-urg':'bg-vol/10 text-vol'}`}>{r.status.toUpperCase()}</span></div>
+            <p className="font-bold text-sm mt-3">{r.name}</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">{r.org}</p>
+            <div className="flex items-center justify-between mt-4">
+              <p className="h1 text-lg">×{r.qty}</p>
+              <button className="btn-o px-3.5 py-1.5 text-[11px]" onClick={()=>toast('📦 Resource offered',r.name+' marked available for active cases.','#8b5cf6','package')}>Offer Resource</button>
+            </div>
+          </div>))}
+      </div>)}
+
+    {tab==='volunteers' && (
+      <div className="card overflow-hidden">
+        <table className="w-full tbl">
+          <thead><tr><th>Volunteer</th><th>Skill</th><th>Distance</th><th>Reliability</th><th>Rating</th><th>Status</th><th className="text-right">Action</th></tr></thead>
+          <tbody>{vols.map(v=>(
+            <tr key={v.id}>
+              <td><span className="flex items-center gap-2.5"><Av name={v.name} color={v.color} s={30}/><span className="font-bold">{v.name}</span></span></td>
+              <td className="text-xs font-semibold">{v.skill}</td>
+              <td className="text-xs">{v.dist} km</td>
+              <td><div className="flex items-center gap-2"><div className="w-16 h-1.5 bg-slate-100 rounded-full"><div className="h-full rounded-full" style={{width:v.reliability+'%',background:v.reliability>=95?'#10b981':'#f59e0b'}}/></div><span className="text-xs font-bold">{v.reliability}%</span></div></td>
+              <td className="text-xs font-bold">★ {v.rating}</td>
+              <td><span className={`chip ${v.available?'bg-ok/10 text-ok':'bg-slate-100 text-slate-400'}`}>{v.available?'AVAILABLE':'BUSY'}</span></td>
+              <td className="text-right"><button className="chip bg-ink text-white hover:opacity-80" onClick={()=>toast('📨 Assigned',v.name+' has been assigned and notified.','#0f1b2d','user-check')}>Assign</button></td>
+            </tr>))}</tbody>
+        </table>
+      </div>)}
+
+    {tab==='orgs' && (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {orgs.map(o=>(
+          <div key={o.id} className="card card-h p-5">
+            <div className="flex items-center gap-2.5 mb-3"><span className="w-10 h-10 rounded-xl flex items-center justify-center text-white" style={{background:'#8b5cf6'}}><I n="building" s={16}/></span>
+              <div><p className="font-bold text-sm leading-tight">{o.name}</p><p className="text-[10px] text-slate-400">{o.type}</p></div>
+              {o.verified && <I n="badge-check" s={15} c="text-vol ml-auto"/>}</div>
+            <p className="text-[11px] text-slate-500">{o.focus} · {o.dist} km</p>
+            <div className="grid grid-cols-3 gap-2 mt-3 text-center">
+              {[o.volunteers+' Vol.', o.active+' Active', o.response].map((x,i)=>(<div key={i} className="rounded-xl bg-slate-50 py-1.5"><p className="text-[11px] font-bold">{x}</p></div>))}
+            </div>
+          </div>))}
+      </div>)}
+
+    {needOpen && (
+      <div className="fixed inset-0 z-[70] bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={()=>setNeedOpen(false)}>
+        <div className="card p-6 w-full max-w-md reveal" onClick={e=>e.stopPropagation()}>
+          <h3 className="h2 text-lg mb-1">Create Need</h3>
+          <p className="text-xs text-slate-500 mb-4">Post a resource or volunteer need — AI will match it to the community.</p>
+          <input className="field mb-3" placeholder="Need title (e.g. 20 blankets for night shelter)"/>
+          <select className="field mb-3"><option>Category…</option>{CATS.map(c=><option key={c}>{c}</option>)}</select>
+          <input className="field mb-4" placeholder="Quantity / volunteers required"/>
+          <div className="flex gap-2 justify-end">
+            <button className="btn-o px-5 py-2.5 text-sm" onClick={()=>setNeedOpen(false)}>Cancel</button>
+            <button className="btn-p px-5 py-2.5 text-sm" onClick={()=>{setNeedOpen(false); toast('📢 Need published','CIVORA MATCH is finding donors & volunteers.','#10b981','check');}}>Publish Need</button>
+          </div>
+        </div>
+      </div>)}
+  </div>);
+};
+
+/* ============================== PROFILE / PRIVACY / BADGES ============================== */
+const ProfilePage = ({profile}) => (
+  <div className="fade-in max-w-4xl mx-auto space-y-5">
+    <div className="card p-6 flex flex-wrap items-center gap-5">
+      <Av name="Alex Morgan" color="#0f1b2d" s={72}/>
+      <div className="flex-1 min-w-[200px]">
+        <h1 className="h1 text-2xl">Alex Morgan</h1>
+        <p className="text-xs text-slate-500">Citizen & Verified Volunteer · Deccan, Pune · joined 2025</p>
+        <div className="flex flex-wrap gap-1.5 mt-2.5">{profile.badges.map(b=><BadgePill key={b} name={b} big/>)}</div>
+      </div>
+      <Ring pct={profile.reliability} size={96} color="#10b981"><p className="h1 text-xl">{profile.reliability}%</p><p className="eyebrow">RELIABILITY</p></Ring>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {[['heart-handshake',profile.helped,'People Helped','#ef4444'],['badge-check',profile.actions,'Cases Resolved','#10b981'],['hand-helping',profile.volunteerActions,'Volunteer Actions','#3b82f6'],['clock',profile.hours+' h','Hours Contributed','#f59e0b']].map(([ic,v,l,c])=>(
+        <div key={l} className="card card-h p-4 text-center"><I n={ic} s={18} c="mx-auto" st={{color:c}}/><p className="h1 text-2xl mt-2">{v}</p><p className="eyebrow mt-0.5">{l.toUpperCase()}</p></div>))}
+    </div>
+    <div className="card p-6">
+      <SectionHead icon="award" title="Impact Badges" sub="Celebrating contribution — not competition" color="#f59e0b"/>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {Object.entries(BADGES).map(([name,b])=>{
+          const owned = profile.badges.includes(name);
+          return (<div key={name} className={`rounded-2xl border p-4 text-center ${owned?'':'opacity-45 grayscale'}`} style={owned?{background:b.c+'0d',borderColor:b.c+'33'}:{borderColor:'#e2e8f0'}}>
+            <span className="w-11 h-11 rounded-2xl inline-flex items-center justify-center mb-2" style={{background:b.c+'18',color:b.c}}><I n={b.icon} s={19}/></span>
+            <p className="text-xs font-bold">{name}</p><p className="text-[10px] text-slate-400 mt-1 leading-snug">{b.d}</p>
+            {owned ? <span className="chip bg-ok/10 text-ok mt-2 inline-block">EARNED</span> : <span className="chip bg-slate-100 text-slate-400 mt-2 inline-block">LOCKED</span>}
+          </div>);})}
+      </div>
+    </div>
+    <div className="card p-6">
+      <SectionHead icon="lock" title="Your Privacy Matters" sub="You control what CIVORA shares — always" color="#10b981"/>
+      <div className="space-y-3">
+        {[['Approximate location only','Your exact address is never shown publicly.',true],['Anonymous reporting','Report sensitive issues without revealing identity.',false],['Consent-based contact','Volunteers can only contact you after you accept.',true],['Medical details protected','Never shared beyond verified responders.',true]].map(([t,d,on],i)=>(
+          <PrivacyToggle key={t} t={t} d={d} onInit={on}/>))}
+      </div>
+      <p className="text-[11px] text-slate-400 mt-4 bg-slate-50 rounded-xl p-3 flex items-center gap-2"><I n="shield-check" s={13} c="text-ok shrink-0"/>CIVORA never exposes private phone numbers, exact home addresses, or unnecessary medical information.</p>
+    </div>
+  </div>);
+const PrivacyToggle = ({t,d,onInit}) => { const [on,setOn]=useState(onInit);
+  return (<div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50">
+    <div className="flex-1"><p className="text-sm font-bold">{t}</p><p className="text-[11px] text-slate-500">{d}</p></div>
+    <button onClick={()=>setOn(!on)} className={`w-11 h-6 rounded-full relative ${on?'bg-ok':'bg-slate-300'}`}>
+      <span className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all" style={{left:on?22:2}}/></button>
+  </div>);};
+
+/* ============================== CIVORA INSIGHT ============================== */
+const INSIGHTS = [
+  {id:1, area:'DP Road · Deccan', title:'Recurring drainage-related flooding detected in this area.',
+   stats:[['file-text',12,'reports'],['image',4,'images'],['map-pin',3,'locations'],['clock',72,'hours']],
+   population:'~1,200 people', action:'Infrastructure inspection', conf:91, trend:'+3 reports this week', caseId:'CV-2044'},
+  {id:2, area:'Pune Station · Shivajinagar', title:'Cold-weather shelter demand clustering near the station.',
+   stats:[['file-text',8,'reports'],['image',2,'images'],['map-pin',2,'locations'],['clock',48,'hours']],
+   population:'~300 people', action:'Blanket drive + shelter coordination', conf:86, trend:'Rising', caseId:'CV-2036'},
+  {id:3, area:'Hillcrest Road · Deccan', title:'Streetlight outages correlating with nighttime safety reports.',
+   stats:[['file-text',6,'reports'],['image',3,'images'],['map-pin',4,'locations'],['clock',96,'hours']],
+   population:'~2,400 people', action:'Municipal lighting audit', conf:82, trend:'Stable', caseId:'CV-2035'}
+];
+const InsightPage = ({openCase, cases}) => (
+  <div className="fade-in space-y-6">
+    <div>
+      <p className="eyebrow mb-1">SIGNATURE INTELLIGENCE</p>
+      <h1 className="h1 text-3xl flex items-center gap-3"><span className="w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="brain" s={20}/></span>CIVORA INSIGHT</h1>
+      <p className="text-sm text-slate-500 mt-2 max-w-2xl">AI converts many small citizen reports into <b className="text-ink">collective intelligence</b> — patterns no single complaint could reveal.</p>
+    </div>
+
+    {/* hero pipeline */}
+    <div className="card p-6 md:p-8 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[.05]" style={{background:'radial-gradient(circle at 20% 30%, #a855f7, transparent 40%), radial-gradient(circle at 80% 70%, #3b82f6, transparent 40%)'}}/>
+      <div className="relative grid md:grid-cols-4 gap-4 items-stretch">
+        {[
+          {icon:'radio', c:'#3b82f6', t:'SCATTERED SIGNALS', d:'12 reports · 4 images · 3 nearby locations · 72 hours', small:true},
+          {icon:'brain', c:'#a855f7', t:'AI PATTERN DETECTION', d:'RECURRING FLOODING PATTERN DETECTED', small:false},
+          {icon:'users', c:'#f59e0b', t:'COMMUNITY INTELLIGENCE', d:'Estimated affected population ~1,200', small:true},
+          {icon:'landmark', c:'#10b981', t:'RECOMMENDED ACTION', d:'Infrastructure review — escalated to municipal cell', small:true}
+        ].map((s,i)=>(
+          <div key={s.t} className="relative fade-in" style={{animationDelay:(i*0.2)+'s'}}>
+            <div className="h-full rounded-2xl border p-5 text-center" style={{borderColor:s.c+'33', background:s.c+'08'}}>
+              <span className="w-11 h-11 rounded-2xl inline-flex items-center justify-center text-white shadow-lg mb-3" style={{background:s.c}}><I n={s.icon} s={18}/></span>
+              <p className="eyebrow" style={{color:s.c}}>{s.t}</p>
+              <p className={`mt-2 leading-snug ${s.small?'text-xs text-slate-600 font-semibold':'h2 text-[15px]'}`}>{s.d}</p>
+            </div>
+            {i<3 && <span className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-slate-300"><I n="chevron-right" s={18}/></span>}
+          </div>))}
+      </div>
+      <p className="text-center text-[11px] text-slate-400 mt-5 relative">This is why CIVORA is more than a reporting app — it turns noise into civic action.</p>
+    </div>
+
+    {INSIGHTS.map((ins,i)=>(
+      <div key={ins.id} className="card p-6 relative overflow-hidden fade-in" style={{animationDelay:(i*0.1)+'s'}}>
+        <div className="absolute top-0 left-0 bottom-0 w-1" style={{background:'linear-gradient(180deg,#a855f7,#6366f1)'}}/>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex-1 min-w-[260px]">
+            <div className="flex items-center gap-2 flex-wrap"><span className="chip bg-ai/10 text-ai"><I n="sparkles" s={11} c="inline"/> AI INSIGHT</span><span className="chip bg-slate-100 text-slate-500">{ins.area}</span><span className="chip bg-ok/10 text-ok">{ins.conf}% confidence</span></div>
+            <p className="h2 text-lg mt-3 leading-snug">"{ins.title}"</p>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {ins.stats.map(([ic,v,l])=>(<span key={l} className="rounded-xl bg-slate-50 px-3.5 py-2 text-center"><span className="h1 text-base flex items-center gap-1.5"><I n={ic} s={13} c="text-slate-400"/>{v}</span><span className="eyebrow">{l.toUpperCase()}</span></span>))}
+            </div>
+          </div>
+          <div className="w-full md:w-64 space-y-3">
+            <div className="rounded-2xl bg-urg/5 border border-urg/20 p-4"><p className="eyebrow" style={{color:'#f59e0b'}}>POTENTIAL AFFECTED POPULATION</p><p className="h1 text-xl mt-1">{ins.population}</p></div>
+            <div className="rounded-2xl bg-vol/5 border border-vol/20 p-4"><p className="eyebrow" style={{color:'#3b82f6'}}>RECOMMENDED ACTION</p><p className="text-sm font-bold mt-1">{ins.action}</p><p className="text-[10px] text-slate-400 mt-0.5">{ins.trend}</p></div>
+            <button className="btn-p w-full py-2.5 text-xs" onClick={()=>openCase(ins.caseId)}>View Source Cases →</button>
+          </div>
+        </div>
+      </div>))}
+
+    {/* Community network visualization */}
+    <div className="card p-6">
+      <SectionHead icon="network" title="The Community Network" sub="Community power comes from connections — citizens, volunteers, organizations and resources around every case"/>
+      <div className="relative mx-auto" style={{maxWidth:560, height:300}}>
+        <svg viewBox="0 0 560 300" className="w-full h-full">
+          {[[280,150,120,60],[280,150,440,60],[280,150,90,230],[280,150,470,230],[280,150,280,40],[280,150,280,262],[120,60,280,40],[440,60,280,40],[90,230,280,262],[470,230,280,262]].map(([x1,y1,x2,y2],i)=>(
+            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#ddd6fe" strokeWidth="1.6" className="line-draw" style={{animationDelay:(i*0.08)+'s'}}/>))}
+        </svg>
+        {[{x:250,y:120,c:'#0f1b2d',icon:'siren',l:'CASE',s:60,d:0},
+          {x:96,y:36,c:'#3b82f6',icon:'heart-handshake',l:'Volunteers',s:48,d:.3},
+          {x:416,y:36,c:'#8b5cf6',icon:'building',l:'NGOs',s:48,d:.45},
+          {x:66,y:206,c:'#f59e0b',icon:'package',l:'Resources',s:48,d:.6},
+          {x:446,y:206,c:'#10b981',icon:'users',l:'Citizens',s:48,d:.75},
+          {x:256,y:16,c:'#ef4444',icon:'megaphone',l:'Reporters',s:44,d:.9},
+          {x:256,y:238,c:'#a855f7',icon:'brain',l:'CORA AI',s:44,d:1.05}
+        ].map(n=>(
+          <span key={n.l} className="absolute node-pop text-center" style={{left:n.x, top:n.y, animationDelay:n.d+'s'}}>
+            <span className="rounded-2xl flex items-center justify-center text-white shadow-lg ring-4 ring-white inline-flex ring-breathe" style={{width:n.s,height:n.s,background:n.c, animationDelay:n.d+'s'}}><I n={n.icon} s={n.s*0.36}/></span>
+            <p className="text-[10px] font-extrabold mt-1 tracking-wider text-slate-500">{n.l}</p>
+          </span>))}
+      </div>
+    </div>
+  </div>);
+
+/* ============================== HEATMAP ============================== */
+const HeatmapPage = ({cases, vols, orgs, openCase}) => {
+  const [layer,setLayer] = useState('needs');
+  const LAYERS = [['needs','Needs','#ef4444'],['volunteers','Volunteer Density','#3b82f6'],['resolved','Resolved Cases','#10b981'],['response','Response Times','#f59e0b'],['gaps','Resource Gaps','#8b5cf6']];
+  const AI_NOTES = {
+    needs:[['siren','#ef4444','3 unresolved cases are within 1 km of DP Road.'],['trending-up','#f59e0b','Medical assistance requests increased 23% this week.']],
+    volunteers:[['users','#3b82f6','Volunteer shortage detected in Camp south zone.'],['sparkles','#a855f7','Weekend availability peaks between 9 AM – 1 PM.']],
+    resolved:[['badge-check','#10b981','Hadapsar has the highest resolution rate: 94%.'],['timer','#f59e0b','Elderly cases resolve fastest — avg 11 minutes.']],
+    response:[['timer','#f59e0b','Response time in Camp is 2.1× the city average.'],['zap','#ef4444','Critical cases average 7 min response in Hadapsar.']],
+    gaps:[['package','#8b5cf6','No medical supply cache within 2 km of Lakeview.'],['home','#8b5cf6','Shelter capacity gap: 40 beds short during cold waves.']]
+  };
+  return (
+  <div className="fade-in space-y-5">
+    <div><p className="eyebrow mb-1">IMPACT MAP</p>
+      <h1 className="h1 text-3xl">Where help is needed — and where it's missing</h1>
+      <p className="text-sm text-slate-500 mt-1">Community needs, people power, and resource gaps at a glance.</p></div>
+    <div className="flex gap-2 flex-wrap">
+      {LAYERS.map(([k,l,c])=>(<button key={k} onClick={()=>setLayer(k)} className={`tabbtn border flex items-center gap-1.5 ${layer===k?'on border-transparent':'bg-white border-slate-200'}`}><span className="w-2 h-2 rounded-full" style={{background:layer===k?'#fff':c}}/>{l}</button>))}
+    </div>
+    <div className="grid lg:grid-cols-3 gap-5">
+      <div className="lg:col-span-2"><MapView cases={cases} vols={vols} orgs={orgs} filter={{cat:'All'}} onSelect={openCase} heat={layer} height={520} showVol={false} showOrg={false}/></div>
+      <div className="space-y-4">
+        <div className="card p-5">
+          <SectionHead icon="sparkles" title="AI Insights" sub="Live analysis of this layer"/>
+          <div className="space-y-3">
+            {AI_NOTES[layer].map(([ic,c,txt],i)=>(
+              <div key={i} className="flex gap-3 p-3.5 rounded-2xl border fade-in" style={{background:c+'08',borderColor:c+'25',animationDelay:(i*.15)+'s'}}>
+                <span className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{background:c+'18',color:c}}><I n={ic} s={16}/></span>
+                <p className="text-xs font-semibold leading-snug text-slate-700">{txt}</p>
+              </div>))}
+          </div>
+        </div>
+        <div className="card p-5">
+          <SectionHead icon="bar-chart-3" title="Zone Summary" color="#3b82f6"/>
+          <div className="space-y-2.5">
+            {[['Deccan',86,'#ef4444'],['Shivajinagar',64,'#f59e0b'],['Koregaon Park',52,'#eab308'],['Camp',38,'#3b82f6'],['Kothrud',24,'#10b981']].map(([z,v,c])=>(
+              <div key={z} className="flex items-center gap-3"><span className="w-32 text-[11px] font-semibold text-slate-500 truncate">{z}</span>
+                <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-700" style={{width:v+'%',background:c}}/></div>
+                <span className="text-[11px] font-bold w-7 text-right">{v}</span></div>))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== EMERGENCY MODE ============================== */
+const EmergencyMode = ({cases, vols, orgs, resources, acceptCase, exit, openCase}) => {
+  const crit = cases.filter(c=>c.severity==='critical'&&c.status!=='resolved');
+  const lead = crit[0];
+  return (
+  <div className="fixed inset-0 z-[60] overflow-y-auto fade-in" style={{background:'linear-gradient(160deg,#1a0505 0%,#2b0a0a 45%,#0f1b2d 100%)'}}>
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <span className="w-11 h-11 rounded-2xl bg-crit flex items-center justify-center text-white pulse-dot"><I n="siren" s={20}/></span>
+          <div><p className="h1 text-white text-xl tracking-wide">CRITICAL COMMUNITY ALERT</p>
+            <p className="text-[11px] text-red-300 font-semibold">{crit.length} active critical case{crit.length!==1?'s':''} · Emergency coordination mode</p></div>
+        </div>
+        <button className="text-white/70 hover:text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 rounded-full px-4 py-2" onClick={exit}><I n="x" s={13}/>Exit</button>
+      </div>
+
+      {lead && <div className="rounded-3xl border border-red-500/30 p-6 mb-5" style={{background:'rgba(255,255,255,.06)',backdropFilter:'blur(10px)'}}>
+        <div className="flex items-center gap-2 mb-2 flex-wrap"><span className="chip bg-crit text-white">#{lead.id}</span><CatTag cat={lead.category}/><span className="chip bg-white/10 text-red-200">Trust {lead.trust}% · VERIFIED</span></div>
+        <h2 className="h1 text-2xl text-white leading-snug">{lead.title}</h2>
+        <p className="text-red-200/80 text-sm mt-2 leading-relaxed">{lead.desc}</p>
+        <p className="text-[12px] text-red-200/70 mt-3 flex items-center gap-1.5"><I n="map-pin" s={13}/>{lead.loc} · approximate location only <I n="lock" s={11}/></p>
+        <div className="flex flex-wrap gap-3 mt-5">
+          <button className="px-7 py-3.5 rounded-2xl bg-crit text-white font-extrabold text-sm flex items-center gap-2 hover:scale-[1.03] shadow-2xl" onClick={()=>{acceptCase(lead.id);}}><I n="hand-helping" s={17}/>RESPOND</button>
+          <button className="px-5 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/20 hover:bg-white/20" onClick={()=>openCase(lead.id)}>View Case</button>
+        </div>
+        <p className="text-[10px] text-red-200/50 mt-3 flex items-center gap-1"><I n="shield-check" s={11}/>Privacy protected — exact addresses and contact details are never exposed in emergency view.</p>
+      </div>}
+
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="rounded-3xl border border-white/10 p-5" style={{background:'rgba(255,255,255,.05)'}}>
+          <p className="eyebrow mb-3 flex items-center gap-1.5" style={{color:'#93c5fd'}}><I n="users" s={13}/>NEARBY VOLUNTEERS</p>
+          <div className="space-y-3">{vols.filter(v=>v.available).slice(0,4).map(v=>(
+            <div key={v.id} className="flex items-center gap-2.5"><Av name={v.name} color={v.color} s={32}/><div className="flex-1"><p className="text-xs font-bold text-white">{v.name}</p><p className="text-[10px] text-white/50">{v.skill} · {v.dist} km</p></div><span className="w-2 h-2 rounded-full bg-ok pulse-soft"/></div>))}</div>
+        </div>
+        <div className="rounded-3xl border border-white/10 p-5" style={{background:'rgba(255,255,255,.05)'}}>
+          <p className="eyebrow mb-3 flex items-center gap-1.5" style={{color:'#d8b4fe'}}><I n="building" s={13}/>NEAREST ORGANIZATIONS</p>
+          <div className="space-y-3">{orgs.slice(0,4).map(o=>(
+            <div key={o.id} className="flex items-center gap-2.5"><span className="w-8 h-8 rounded-xl bg-ngo flex items-center justify-center text-white"><I n="building" s={14}/></span><div><p className="text-xs font-bold text-white">{o.name}</p><p className="text-[10px] text-white/50">{o.focus} · {o.dist} km · responds {o.response}</p></div></div>))}</div>
+        </div>
+        <div className="rounded-3xl border border-white/10 p-5" style={{background:'rgba(255,255,255,.05)'}}>
+          <p className="eyebrow mb-3 flex items-center gap-1.5" style={{color:'#6ee7b7'}}><I n="package" s={13}/>AVAILABLE RESOURCES</p>
+          <div className="space-y-2.5">{resources.filter(r=>r.status!=='deployed').slice(0,5).map(r=>(
+            <div key={r.id} className="flex items-center justify-between"><p className="text-xs font-semibold text-white/90">{r.name}</p><span className="text-[10px] font-bold text-white/40">×{r.qty}</span></div>))}</div>
+          <div className="mt-4 pt-3 border-t border-white/10">
+            <p className="eyebrow mb-2 flex items-center gap-1.5" style={{color:'#fca5a5'}}><I n="phone-call" s={12}/>EMERGENCY SERVICES</p>
+            <div className="flex flex-wrap gap-2">{['Ambulance','Fire','Police'].map(s=><span key={s} className="chip bg-red-500/20 text-red-200 border border-red-400/30">{s} · notified</span>)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== IMPACT DASHBOARD ============================== */
+const ImpactPage = ({stats, profile, cases}) => {
+  const resolved = cases.filter(c=>c.status==='resolved').length;
+  return (
+  <div className="fade-in space-y-6">
+    <div className="card p-8 md:p-10 text-center relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[.04]" style={{background:'radial-gradient(circle at 25% 20%, #10b981, transparent 40%), radial-gradient(circle at 75% 80%, #a855f7, transparent 40%)'}}/>
+      <div className="flex justify-center mb-4"><Logo s={42}/></div>
+      <h1 className="h1 text-2xl md:text-3xl max-w-2xl mx-auto leading-relaxed">"Small actions become <span className="grad-text">measurable impact</span> when a community acts together."</h1>
+    </div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {[['heart-handshake',stats.helped,'PEOPLE HELPED','#10b981'],['badge-check',stats.resolved,'CASES RESOLVED','#3b82f6'],['clock',8420,'VOLUNTEER HOURS','#8b5cf6'],['timer',stats.response,'AVG RESPONSE','#f59e0b',' MIN']].map(([ic,v,l,c,sfx])=>(
+        <div key={l} className="card card-h p-6 text-center">
+          <span className="w-11 h-11 rounded-2xl inline-flex items-center justify-center mb-3" style={{background:c+'14',color:c}}><I n={ic} s={19}/></span>
+          <p className="h1 text-3xl" style={{color:c}}><Counter to={v} suffix={sfx||''}/></p>
+          <p className="eyebrow mt-1">{l}</p>
+        </div>))}
+    </div>
+    <div className="grid lg:grid-cols-2 gap-5">
+      <div className="card p-6"><SectionHead icon="bar-chart-3" title="Cases by Category" sub="Share of all reports this quarter" color="#3b82f6"/><BarChart data={CAT_SPLIT}/></div>
+      <div className="card p-6"><SectionHead icon="trending-down" title="Response Time Trend" sub="Minutes — improving as the network grows" color="#f59e0b"/><LineChart data={RESP_TREND} color="#f59e0b"/>
+        <div className="flex justify-between text-[9px] font-bold text-slate-400 px-1">{MONTHS.map(m=><span key={m}>{m}</span>)}</div></div>
+      <div className="card p-6"><SectionHead icon="activity" title="Community Needs Over Time" sub="Reports per week" color="#0ea5e9"/><LineChart data={WEEK_TREND} color="#3b82f6"/>
+        <div className="flex justify-between text-[9px] font-bold text-slate-400 px-1">{MONTHS.map(m=><span key={m}>{m}</span>)}</div></div>
+      <div className="card p-6"><SectionHead icon="users" title="Volunteer Activity & Resolution Rate" color="#10b981"/>
+        <div className="flex items-center justify-around pt-2 flex-wrap gap-4">
+          <Ring pct={87} size={140} color="#10b981" stroke={12}><p className="h1 text-3xl">87%</p><p className="eyebrow">RESOLUTION</p></Ring>
+          <div className="space-y-3 min-w-[160px]">
+            {[['#10b981','Resolved','87%'],['#f59e0b','In progress','9%'],['#3b82f6','Open','4%']].map(([c,l,v])=>(
+              <div key={l} className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{background:c}}/><span className="text-xs font-semibold text-slate-600 flex-1">{l}</span><span className="text-xs font-extrabold">{v}</span></div>))}
+            <p className="text-[10px] text-slate-400 pt-1">{resolved} cases resolved in this demo dataset</p>
+          </div>
+        </div></div>
+    </div>
+    <div className="card p-6 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[.05]" style={{background:'radial-gradient(circle at 80% 20%, #a855f7, transparent 45%), radial-gradient(circle at 10% 90%, #10b981, transparent 45%)'}}/>
+      <div className="flex flex-wrap items-center gap-6 relative">
+        <Ring pct={Math.min(100, Math.round((profile.helped/50)*100))} size={120} stroke={11} color="#a855f7">
+          <p className="h1 text-2xl">{profile.helped*12}</p><p className="eyebrow">IMPACT SCORE</p></Ring>
+        <div className="flex-1 min-w-[220px]">
+          <h3 className="h2 text-xl">Your CIVORA Impact</h3>
+          <p className="text-xs text-slate-500 mt-1">You are in the top 8% of contributors in Deccan, Pune.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            {[[profile.helped,'people helped'],[profile.actions,'cases resolved'],[profile.volunteerActions,'volunteer actions'],[profile.hours,'hours']].map(([v,l])=>(
+              <div key={l} className="rounded-2xl bg-white/70 border border-slate-100 p-3 text-center"><p className="h1 text-xl"><Counter to={v} decimals={l==='hours'?1:0}/></p><p className="text-[10px] font-bold text-slate-400">{l}</p></div>))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== CORA AI ASSISTANT ============================== */
+const Cora = ({open, setOpen, cases, vols, go, openCase}) => {
+  const [msgs,setMsgs] = useState([{role:'ai', text:"Hi. I'm CORA.\nLet's find a way to help. I read the live community state and connect you to where humans are needed most."}]);
+  const [input,setInput] = useState('');
+  const [typing,setTyping] = useState(false);
+  const boxRef = useRef();
+  useEffect(()=>{ if(boxRef.current) boxRef.current.scrollTop = boxRef.current.scrollHeight; },[msgs,typing,open]);
+
+  const reply = (q) => {
+    const s = q.toLowerCase();
+    const crit = cases.filter(c=>c.severity==='critical'&&c.status!=='resolved');
+    const open = cases.filter(c=>['open','matching'].includes(c.status));
+    if(/urgent|critical|emergency/.test(s)) return {text:`There are ${crit.length} critical cases right now. Most urgent: "${crit[0]?.title}" — ${crit[0]?.loc}, about ${crit[0]?km(crit[0]):'-'} km away.`, caseId:crit[0]?.id, action:'Open critical case'};
+    if(/30 min|help today|how can i help|volunteer/.test(s)) return {text:`For ~30 minutes of help, your best fit is "${open[0]?.title}" — ${km(open[0])} km away, matching your First Aid skill. ${open.length} open needs total.`, go:'volunteer', action:'Open Volunteer Center'};
+    if(/medical|blood/.test(s)) { const m=cases.find(c=>c.category==='Blood'&&c.status!=='resolved')||cases.find(c=>c.category==='Medical'&&c.status!=='resolved'); return {text:`Medical opportunities near you: "${m?.title}" at ${m?.loc}. Dr. Aditi Rao (0.4 km, ★4.9) is also active there.`, caseId:m?.id, action:'Open case'}; }
+    if(/near me|nearby|area/.test(s)) return {text:`Within 3 km of you: ${open.length} open needs (${crit.length} critical), ${vols.filter(v=>v.available).length} available volunteers, and 3 partner organizations. The map shows everything live.`, go:'explore', action:'Open map'};
+    if(/why.*(urgent|high priority)|explain/.test(s)) return {text:`Cases are marked high priority when I detect time-sensitive factors: risk to people, worsening conditions, weather exposure, or vulnerable individuals. A human always reviews before sensitive actions — I never auto-resolve serious incidents.`};
+    if(/volunteers needed most|shortage/.test(s)) return {text:`Volunteer shortage detected in Camp south zone — only 2 active volunteers against 6 open needs. Deccan has strong coverage. If you can travel, Camp is where you'd matter most today.`, go:'heatmap', action:'Open heatmap'};
+    if(/unresolved|open/.test(s)) return {text:`${open.length} cases are unresolved in your area, including ${crit.length} critical. Top priority: "${crit[0]?.title||open[0]?.title}".`, caseId:(crit[0]||open[0])?.id, action:'Open case'};
+    if(/insight|pattern/.test(s)) return {text:`My strongest insight right now: 12 reports over 72 hours reveal recurring drainage flooding on DP Road, potentially affecting ~1,200 people. Recommended: infrastructure inspection.`, go:'insight', action:'Open CIVORA Insight'};
+    return {text:`I can surface nearby needs, explain case priorities, match your skills, or reveal community patterns. Try "How can I help for 30 minutes?" or "Where are volunteers needed most?"`};
+  };
+
+  const send = (q) => {
+    const text = q||input.trim(); if(!text) return;
+    setMsgs(m=>[...m,{role:'user',text}]); setInput(''); setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m,{role:'ai', ...reply(text)}]); }, 900+Math.random()*600);
+  };
+  const SUGGEST = ['What needs help nearby?','How can I help for 30 minutes?','Show urgent cases.','Why is this case high priority?','Where are volunteers needed most?'];
+  if(!open) return null;
+  return (
+    <div className="fixed bottom-24 right-5 z-[75] w-[380px] max-w-[calc(100vw-32px)] card cora-glow overflow-hidden slide-in flex flex-col" style={{height:520}}>
+      <div className="p-4 flex items-center gap-3 text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}>
+        <span className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center"><I n="bot" s={19}/></span>
+        <div className="flex-1"><p className="h1">CORA</p><p className="text-[10px] text-white/70">Contextual AI companion · humans do the helping</p></div>
+        <span className="chip bg-white/20 text-white text-[9px]">ONLINE</span>
+        <button onClick={()=>setOpen(false)} className="text-white/80 hover:text-white"><I n="x" s={16}/></button>
+      </div>
+      <div ref={boxRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/60">
+        {msgs.map((m,i)=>(
+          <div key={i} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
+            <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[12.5px] leading-relaxed whitespace-pre-line ${m.role==='user'?'bg-ink text-white rounded-br-md':'bg-white border border-slate-100 shadow-sm rounded-bl-md'}`}>
+              {m.text}
+              {(m.caseId || m.go) && <button className="mt-2 chip bg-ai/10 text-ai flex items-center gap-1 hover:bg-ai hover:text-white"
+                onClick={()=>{ if(m.caseId){openCase(m.caseId); setOpen(false);} else if(m.go){go(m.go); setOpen(false);} }}>
+                {m.action||'Open'} <I n="arrow-right" s={11}/></button>}
+            </div>
+          </div>))}
+        {typing && <div className="flex"><div className="bg-white border border-slate-100 shadow-sm rounded-2xl rounded-bl-md px-4 py-3 flex gap-1.5">
+          {[0,1,2].map(i=><span key={i} className="w-1.5 h-1.5 rounded-full bg-ai animate-bounce" style={{animationDelay:(i*0.15)+'s'}}/>)}</div></div>}
+      </div>
+      <div className="p-3 border-t border-slate-100 bg-white">
+        <div className="flex gap-1.5 overflow-x-auto pb-2">{SUGGEST.map(s=>(<button key={s} className="chip bg-slate-100 text-slate-500 hover:bg-ai/10 hover:text-ai whitespace-nowrap" onClick={()=>send(s)}>{s}</button>))}</div>
+        <div className="flex gap-2">
+          <input className="field !py-2.5 text-xs" placeholder="Ask CORA anything…" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}/>
+          <button className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 hover:scale-105" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}} onClick={()=>send()}><I n="send" s={15}/></button>
+        </div>
+      </div>
+    </div>);
+};
+
+/* ============================== RESOLUTION MOMENT ============================== */
+const SuccessOverlay = ({caseId, onDone, elapsed, teamSize}) => (
+  <div className="fixed inset-0 z-[80] bg-ink/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="card p-10 text-center w-[420px] max-w-full reveal relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-1.5" style={{background:'linear-gradient(90deg,#10b981,#0ea5e9)'}}/>
+      <p className="eyebrow mb-4" style={{color:'#10b981'}}>COMMUNITY ACTION COMPLETE</p>
+      <svg width="90" height="90" viewBox="0 0 90 90" className="mx-auto">
+        <circle cx="45" cy="45" r="40" fill="none" stroke="#10b981" strokeWidth="5" strokeLinecap="round" className="ring-breathe"/>
+        <path d="M28 46 L40 58 L63 34" fill="none" stroke="#10b981" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" pathLength="60" strokeDasharray="60" strokeDashoffset="60">
+          <animate attributeName="stroke-dashoffset" from="60" to="0" dur="0.6s" begin="0.3s" fill="freeze"/>
+        </path>
+      </svg>
+      <h2 className="h1 text-2xl mt-4">Another problem solved<br/>by the community.</h2>
+      <p className="text-[11px] text-slate-400 mt-2">Case #{caseId} · verified by human confirmation · impact recorded</p>
+      <div className="grid grid-cols-3 gap-2.5 mt-6">
+        {[[elapsed||'9 min','RESPONSE TIME','#f59e0b'],[teamSize||3,'PEOPLE INVOLVED','#3b82f6'],['+1','IMPACT GENERATED','#10b981']].map(([v,l,c])=>(
+          <div key={l} className="rounded-2xl p-3" style={{background:c+'0d'}}><p className="h1 text-lg" style={{color:c}}>{v}</p><p className="eyebrow mt-0.5">{l}</p></div>))}
+      </div>
+      <button className="btn-g px-8 py-3 text-sm mt-7" onClick={onDone}>See Updated Impact →</button>
+    </div>
+  </div>);
+
+/* ============================== DEMO MODE ============================== */
+const DEMO_CAPTIONS = {
+  intro:'Pune. Monsoon evening. A street that floods every year.',
+  report:'A citizen reports a dangerous flooded road — one photo, ten seconds.',
+  ai:'CORA reads the image, checks nearby signals, and scores the report.',
+  trust:'CIVORA Trust Score: 91% — verified by evidence, location and history.',
+  insight:'CIVORA Insight connects this to 3 earlier reports — a pattern emerges.',
+  case:'Case CV-2101 is live on the community map.',
+  match:'CIVORA MATCH finds the right people — by distance, skill, reliability.',
+  accept:'Vikram Nair, a Search & Rescue volunteer 0.6 km away, accepts.',
+  room:'The Response Room opens. Humans coordinate. AI assists.',
+  progress:'The team warns commuters and clears the blocked drain.',
+  complete:'Action marked complete. A human must confirm resolution.',
+  resolved:'Confirmed. The road is safe again.',
+  impact:'Impact updates across the network — one report helped many.',
+  finale:'ONE REPORT · BECAME · ONE COMMUNITY ACTION · THAT HELPED · MANY PEOPLE'
+};
+const DemoMode = ({demo, onPause, onResume, onSkip, onExit}) => {
+  const cap = DEMO_CAPTIONS[demo.scene]||'';
+  return (
+  <div className="fixed inset-0 z-[65] flex flex-col pointer-events-none">
+    <div className="flex-1"/>
+    <div className="pointer-events-auto mx-4 mb-24 lg:mb-6 max-w-3xl lg:mx-auto w-auto demo-bar rounded-3xl p-5 text-white reveal">
+      <div className="flex items-center gap-3 mb-3">
+        <Logo s={30}/>
+        <div className="flex-1">
+          <p className="eyebrow" style={{color:'#6ee7b7'}}>CIVORA LIVE DEMO · {demo.step+1}/{demo.total}</p>
+          <p className="text-sm font-semibold leading-snug mt-0.5">{cap}</p>
+        </div>
+        <div className="flex gap-2">
+          {demo.paused
+            ? <button className="px-4 py-2 rounded-full bg-ok text-ink text-[11px] font-extrabold flex items-center gap-1.5" onClick={onResume}><I n="play" s={12}/>CONTINUE</button>
+            : <button className="px-4 py-2 rounded-full bg-white/15 text-white text-[11px] font-extrabold flex items-center gap-1.5" onClick={onPause}><I n="pause" s={12}/>PAUSE</button>}
+          <button className="px-4 py-2 rounded-full bg-white/15 text-white text-[11px] font-extrabold" onClick={onSkip}>SKIP</button>
+          <button className="px-3 py-2 rounded-full bg-white/10 text-white/70 hover:text-white" onClick={onExit}><I n="x" s={13}/></button>
+        </div>
+      </div>
+      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all duration-700" style={{width:((demo.step+1)/demo.total*100)+'%', background:'linear-gradient(90deg,#10b981,#3b82f6,#a855f7)'}}/>
+      </div>
+    </div>
+  </div>);
+};
+
+/* ============================== MOBILE BOTTOM NAV ============================== */
+const MobileNav = ({view, go, setCoraOpen}) => (
+  <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 glass border-t border-slate-200/70 px-2 py-1.5 flex justify-around" style={{paddingBottom:'max(6px, env(safe-area-inset-bottom))'}}>
+    {[['explore','map','Explore'],['report','megaphone','Report'],['volunteer','heart-handshake','Volunteer'],['impact','bar-chart-3','Impact']].map(([v,ic,l])=>(
+      <button key={v} onClick={()=>go(v)} className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl min-w-[60px] ${view===v?'text-ink':'text-slate-400'}`}>
+        <I n={ic} s={19}/><span className="text-[9px] font-bold">{l}</span>
+        {view===v && <span className="w-4 h-0.5 rounded-full bg-gradient-to-r from-emerald-500 to-violet-500"/>}
+      </button>))}
+    <button onClick={()=>setCoraOpen(true)} className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl min-w-[60px] text-ai">
+      <I n="sparkles" s={19}/><span className="text-[9px] font-bold">CORA</span>
+    </button>
+  </div>);
+
+/* ============================== PRESENTATION MODE ============================== */
+const PresentMode = ({cases, stats, vols, openCase, exit}) => {
+  const lead = cases.find(c=>c.severity==='critical'&&c.status!=='resolved') || cases[0];
+  return (
+  <div className="fixed inset-0 z-[62] overflow-y-auto" style={{background:'linear-gradient(180deg,#0f1b2d,#16283f)'}}>
+    <div className="max-w-5xl mx-auto px-6 py-10 text-white">
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-3"><Logo s={40}/><div><p className="h1 text-2xl">CIVORA</p><p className="text-[10px] font-bold tracking-[.2em] text-white/50">PEOPLE. INTELLIGENCE. ACTION.</p></div></div>
+        <button className="px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-sm font-bold hover:bg-white/20" onClick={exit}>Exit Presentation</button>
+      </div>
+      <div className="grid grid-cols-4 gap-4 mb-10">
+        {[[stats.helped,'PEOPLE HELPED','#10b981'],[stats.resolved,'CASES RESOLVED','#3b82f6'],[8420,'VOLUNTEER HOURS','#a855f7'],[stats.response+' MIN','AVG RESPONSE','#f59e0b']].map(([v,l,c])=>(
+          <div key={l} className="rounded-3xl p-6 text-center border border-white/10" style={{background:'rgba(255,255,255,.05)'}}>
+            <p className="h1 text-4xl" style={{color:c}}>{typeof v==='number'?<Counter to={v}/>:v}</p><p className="eyebrow mt-2" style={{color:'rgba(255,255,255,.5)'}}>{l}</p>
+          </div>))}
+      </div>
+      {lead && <div className="rounded-3xl border border-white/10 p-8 mb-8" style={{background:'rgba(255,255,255,.05)'}}>
+        <p className="eyebrow mb-3" style={{color:'#fca5a5'}}>LIVE CASE · #{lead.id}</p>
+        <h2 className="h1 text-3xl leading-snug">{lead.title}</h2>
+        <p className="text-white/60 mt-3 max-w-2xl leading-relaxed">{lead.desc}</p>
+        <div className="flex flex-wrap gap-3 mt-6">
+          <span className="chip bg-crit/20 text-red-300 border border-red-400/30">Severity {SEV[lead.severity].label}</span>
+          <span className="chip bg-white/10 text-white/70">Trust {lead.trust}%</span>
+          <span className="chip bg-white/10 text-white/70">{(lead.responders||[]).length} responders</span>
+          <span className="chip bg-white/10 text-white/70">{lead.loc}</span>
+        </div>
+      </div>}
+      <div className="grid grid-cols-5 gap-3">
+        {LOOP.map((s,i)=>(
+          <div key={s.t} className="rounded-2xl border border-white/10 p-4 text-center fade-in" style={{animationDelay:(i*0.12)+'s', background:'rgba(255,255,255,.04)'}}>
+            <span className="w-10 h-10 rounded-xl inline-flex items-center justify-center text-white mb-2" style={{background:s.c}}><I n={s.icon} s={17}/></span>
+            <p className="text-[11px] font-extrabold tracking-wider">{s.t}</p>
+          </div>))}
+      </div>
+      <p className="text-center text-white/40 text-sm mt-10">"AI connects the right people. Humans do the helping."</p>
+    </div>
+  </div>);
+};
+
+/* ============================== APP SHELL ============================== */
+function App(){
+  const [started,setStarted] = useState(false);
+  const [view,setView] = useState('explore');
+  const [role,setRole] = useState('citizen');
+  const [cases,setCases] = useState(initialCases);
+  const [vols] = useState(initialVolunteers);
+  const [orgs] = useState(initialOrgs);
+  const [resources] = useState(initialResources);
+  const [notifs,setNotifs] = useState(initialNotifs);
+  const [notifOpen,setNotifOpen] = useState(false);
+  const [coraOpen,setCoraOpen] = useState(false);
+  const [emergency,setEmergency] = useState(false);
+  const [present,setPresent] = useState(false);
+  const [toasts,setToasts] = useState([]);
+  const [selectedCaseId,setSelectedCaseId] = useState(null);
+  const [successCase,setSuccessCase] = useState(null);
+  const [demo,setDemo] = useState(null); // {step, scene, paused, total, caseId}
+  const [profile,setProfile] = useState({helped:23, actions:11, volunteerActions:14, hours:8.5, reliability:96, badges:['Community Helper','First Responder']});
+  const caseSeq = useRef(2101);
+  const demoTimers = useRef([]);
+
+  const toast = useCallback((title, body, color='#10b981', icon='check')=>{
+    const id = uid(); setToasts(t=>[...t,{id,title,body,color,icon}]);
+    setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)), 4600);
+  },[]);
+  const pushNotif = useCallback((n)=> setNotifs(list=>[{id:uid(), unread:true, time:'just now', ...n}, ...list]),[]);
+  const patchCase = useCallback((id, fn)=> setCases(cs=>cs.map(c=>c.id===id?fn({...c}):c)),[]);
+
+  const go = useCallback((v)=>{ setView(v); setSelectedCaseId(null); window.scrollTo({top:0}); },[]);
+  const openCase = useCallback((id)=>{ setSelectedCaseId(id); setView('explore'); setEmergency(false); window.scrollTo({top:0}); },[]);
+  const enter = useCallback((r,v)=>{ setStarted(true); setRole(r); setView(v); },[]);
+  const setRoleNav = useCallback((r)=>{ setRole(r); go(ROLE_HOME[r]); },[go]);
+
+  const stats = useMemo(()=>({
+    helped: 12483 + cases.filter(c=>c.demo&&c.status==='resolved').length,
+    volunteers: 3842, resolved: 1927 + cases.filter(c=>c.demo&&c.status==='resolved').length, response: 18
+  }),[cases]);
+
+  const createCase = useCallback(({desc, files, loc, approx, anon, cat, sev, ai})=>{
+    const id = 'CV-'+(caseSeq.current++);
+    const title = desc ? (desc.length>64? desc.slice(0,64).trim()+'…' : desc) : (ai.det+' — reported incident');
+    const c = { id, title, category:cat, severity:sev, status:'matching', trust:ai.trust, trustState:ai.trustState,
+      x: loc?loc.x:50, y: loc?loc.y:50, loc: approx?'Approx. · Deccan, Pune':'Pinned location · Deccan, Pune',
+      time: nowT(), reporter: anon?'Anonymous':'You', desc: desc||ai.det, files: files||[], responders:[], org:null, peopleHelped:1, demo:true,
+      timeline:[TL(nowT(), anon?'Reported anonymously (privacy protected)':'Reported by you'),
+        TL(nowT(), `AI classified: ${cat} — severity ${SEV[sev].label}`, 'sparkles'),
+        TL(nowT(), `Trust Score ${ai.trust}% — ${TRUST_META[ai.trustState].label}`, 'shield-check'),
+        TL(nowT(), 'CIVORA MATCH searching for responders…', 'git-merge')]};
+    setCases(cs=>[c,...cs]);
+    pushNotif({icon:'📢', title:'Your report is live', body:`Case ${id} created and matched with nearby responders.`, caseId:id});
+    return c;
+  },[pushNotif]);
+
+  const matchNotify = useCallback((id)=>{
+    patchCase(id, c=>{ if(c.status==='open') c.status='matching';
+      c.timeline=[...c.timeline, TL(nowT(),'Best-matched volunteers & organizations notified','send')]; return c; });
+    toast('🤖 CIVORA MATCH','Matched responders notified — waiting for a human to accept.','#a855f7','send');
+    pushNotif({icon:'🧠', title:'CIVORA MATCH complete', body:'Top-ranked volunteers and organizations were notified.', caseId:id});
+    setTimeout(()=>{
+      patchCase(id, c=>{ if(['open','matching'].includes(c.status)){
+        c.status='in_progress';
+        c.responders=[{n:'Vikram Nair',r:'Search & Rescue · 0.6 km'}, ...(c.responders||[])];
+        c.timeline=[...c.timeline, TL(nowT(),'Volunteer Vikram Nair accepted the case','user-check'), TL(nowT(),'Assistance in progress','activity')]; }
+        return c; });
+      toast('🤝 Volunteer accepted','Vikram Nair (0.6 km · 96% reliability) is on the way.','#10b981','user-check');
+      pushNotif({icon:'🟢', title:'Volunteer accepted the case', body:'Vikram Nair is responding — case moved to In Progress.', caseId:id});
+    }, 4000);
+  },[patchCase, toast, pushNotif]);
+
+  const acceptCase = useCallback((id)=>{
+    patchCase(id, c=>{ c.status='in_progress';
+      c.responders=[{n:'You',r:'Volunteer · now'}, ...(c.responders||[])];
+      c.timeline=[...c.timeline, TL(nowT(),'You accepted the case','user-check'), TL(nowT(),'Assistance in progress','activity')]; return c; });
+    toast('💚 You are on it','Case accepted. Coordinate safely — mark complete when done.','#10b981','hand-helping');
+    openCase(id);
+  },[patchCase, toast, openCase]);
+
+  const markComplete = useCallback((id)=>{
+    patchCase(id, c=>{ c.status='awaiting_confirmation';
+      c.timeline=[...c.timeline, TL(nowT(),'Action marked complete — awaiting human confirmation','flag')]; return c; });
+    toast('⏳ Awaiting confirmation','Sensitive cases need the reporter to confirm resolution.','#0ea5e9','shield-check');
+  },[patchCase, toast]);
+
+  const confirmResolution = useCallback((id)=>{
+    patchCase(id, c=>{ c.status='resolved'; c.resolvedAt=nowT();
+      c.timeline=[...c.timeline, TL(nowT(),'Resolved — confirmed by reporter','badge-check')]; return c; });
+    setProfile(p=>{
+      const badges = [...p.badges];
+      if(p.helped+1>=10 && !badges.includes('Community Helper')) badges.push('Community Helper');
+      if(p.helped+1>=100 && !badges.includes('100 Lives Touched')) badges.push('100 Lives Touched');
+      return {...p, helped:p.helped+1, actions:p.actions+1, volunteerActions:p.volunteerActions+1, hours:+(p.hours+0.5).toFixed(1), badges};
+    });
+    pushNotif({icon:'✅', title:'Case verified as resolved', body:`${id} confirmed by the community. Impact recorded.`, caseId:id});
+    setSuccessCase(id);
+  },[patchCase, pushNotif]);
+
+  /* ---------- DEMO SCRIPT ---------- */
+  const DEMO_STEPS = [
+    ['intro','explore', 4200], ['report','report', 5200], ['ai','report', 6200], ['trust','report', 5200],
+    ['insight','insight', 5600], ['case','explore', 4600], ['match','explore', 5600], ['accept','case', 4600],
+    ['room','case', 5200], ['progress','case', 4600], ['complete','case', 4600], ['resolved','case', 4600],
+    ['impact','impact', 5600], ['finale','finale', 6400]
+  ];
+  const demoCaseId = useRef(null);
+  const clearDemoTimers = ()=>{ demoTimers.current.forEach(clearTimeout); demoTimers.current=[]; };
+  const stopDemo = useCallback(()=>{ clearDemoTimers(); setDemo(null); },[]);
+
+  const startDemo = useCallback(()=>{
+    clearDemoTimers();
+    setStarted(true); setRole('citizen'); setPresent(false); setEmergency(false); setCoraOpen(false); setSelectedCaseId(null);
+    // create the flooded-road case up front, hidden state evolves across scenes
+    const id = 'CV-'+(caseSeq.current++);
+    demoCaseId.current = id;
+    const c = { id, title:'Dangerous flooded road near Deccan Gymkhana', category:'Infrastructure', severity:'urgent', status:'matching',
+      trust:91, trustState:'verified', x:47, y:44, loc:'DP Road, Deccan · Pune', time:nowT(), reporter:'A citizen (photo report)',
+      desc:'Heavy monsoon rain has waterlogged DP Road near Deccan Gymkhana. A scooter skidded minutes ago. The storm drain appears completely blocked — water is rising fast.',
+      files:[{name:'flooded-road.jpg',type:'image'}], responders:[], org:null, peopleHelped:120, demo:true,
+      timeline:[TL(nowT(),'Citizen report received with photo evidence','camera')]};
+    setCases(cs=>[c,...cs]);
+    setDemo({step:0, scene:'intro', paused:false, total:DEMO_STEPS.length, caseId:id});
+
+    let t = 0;
+    DEMO_STEPS.forEach(([scene, target, dur], i)=>{
+      t += 0; // step starts when previous ends
+      demoTimers.current.push(setTimeout(()=>{
+        setDemo(d=> d && !d.paused ? {...d, step:i, scene} : d);
+        if(target==='report') go('report');
+        if(target==='insight') go('insight');
+        if(target==='explore') go('explore');
+        if(target==='impact') go('impact');
+        if(target==='case') openCase(id);
+        if(target==='finale'){ setSelectedCaseId(null); setView('finale'); }
+        // case evolution
+        if(scene==='ai') patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'AI analyzed image: severe waterlogging — blocked drainage','sparkles')]; return cc; });
+        if(scene==='trust') patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'Trust Score 91% — VERIFIED','shield-check')]; return cc; });
+        if(scene==='insight') patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'CIVORA Insight linked 3 earlier flooding reports','brain')]; return cc; });
+        if(scene==='match'){ patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'CIVORA MATCH: Vikram Nair — 96% match (0.6 km · Search & Rescue)','git-merge')]; return cc; });
+          pushNotif({icon:'🧠', title:'CIVORA MATCH complete', body:'Vikram Nair is the best match for '+id+'.', caseId:id}); }
+        if(scene==='accept') patchCase(id, cc=>{ cc.status='in_progress';
+          cc.responders=[{n:'Vikram Nair',r:'Search & Rescue · 0.6 km'},{n:'CleanCity Crew',r:'Drain-clearing team'}];
+          cc.timeline=[...cc.timeline, TL(nowT(),'Vikram Nair accepted — Response Room opened','user-check')]; return cc; });
+        if(scene==='progress') patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'Team on site — warning commuters, clearing drain','activity')]; return cc; });
+        if(scene==='complete') patchCase(id, cc=>{ cc.status='awaiting_confirmation'; cc.timeline=[...cc.timeline, TL(nowT(),'Action marked complete — awaiting human confirmation','flag')]; return cc; });
+        if(scene==='resolved'){ patchCase(id, cc=>{ cc.status='resolved'; cc.resolvedAt=nowT(); cc.timeline=[...cc.timeline, TL(nowT(),'Resolved — confirmed by the reporting citizen','badge-check')]; return cc; });
+          pushNotif({icon:'✅', title:'Case verified as resolved', body:id+' — DP Road is safe again. Impact recorded.', caseId:id});
+          setProfile(p=>({...p, helped:p.helped+1, actions:p.actions+1})); }
+      }, DEMO_STEPS.slice(0,i).reduce((a,s)=>a+s[2],0) ));
+    });
+    demoTimers.current.push(setTimeout(()=>{ setDemo(null); }, DEMO_STEPS.reduce((a,s)=>a+s[2],0)+1000));
+  },[go, openCase, patchCase, pushNotif]);
+
+  const demoPause = ()=>{ clearDemoTimers(); setDemo(d=>({...d, paused:true})); };
+  const demoResume = ()=>{
+    if(!demo) return;
+    // resume from current step with remaining scenes
+    const idx = demo.step;
+    const id = demo.caseId;
+    let acc = 0;
+    DEMO_STEPS.slice(idx+1).forEach(([scene, target, dur], j)=>{
+      const i = idx+1+j;
+      demoTimers.current.push(setTimeout(()=>{
+        setDemo(d=> d? {...d, step:i, scene, paused:false} : d);
+        if(target==='insight') go('insight'); else if(target==='impact') go('impact');
+        else if(target==='explore') go('explore'); else if(target==='report') go('report');
+        else if(target==='case') openCase(id); else if(target==='finale'){ setSelectedCaseId(null); setView('finale'); }
+        if(scene==='match'){ patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'CIVORA MATCH: Vikram Nair — 96% match','git-merge')]; return cc; }); }
+        if(scene==='accept') patchCase(id, cc=>{ cc.status='in_progress'; cc.responders=[{n:'Vikram Nair',r:'Search & Rescue · 0.6 km'},{n:'CleanCity Crew',r:'Drain-clearing team'}]; cc.timeline=[...cc.timeline, TL(nowT(),'Vikram Nair accepted — Response Room opened','user-check')]; return cc; });
+        if(scene==='progress') patchCase(id, cc=>{ cc.timeline=[...cc.timeline, TL(nowT(),'Team on site — clearing drain','activity')]; return cc; });
+        if(scene==='complete') patchCase(id, cc=>{ cc.status='awaiting_confirmation'; cc.timeline=[...cc.timeline, TL(nowT(),'Action marked complete — awaiting human confirmation','flag')]; return cc; });
+        if(scene==='resolved'){ patchCase(id, cc=>{ cc.status='resolved'; cc.resolvedAt=nowT(); cc.timeline=[...cc.timeline, TL(nowT(),'Resolved — confirmed by the reporting citizen','badge-check')]; return cc; }); setProfile(p=>({...p, helped:p.helped+1, actions:p.actions+1})); }
+      }, acc)); acc += dur;
+    });
+    demoTimers.current.push(setTimeout(()=>setDemo(null), acc+800));
+    setDemo(d=>({...d, paused:false}));
+  };
+  const demoSkip = ()=>{ stopDemo(); setStarted(true); go('explore'); };
+
+  const unread = notifs.filter(n=>n.unread).length;
+  const selectedCase = cases.find(c=>c.id===selectedCaseId);
+
+  if(!started) return <Landing enter={enter} stats={stats} startDemo={startDemo}/>;
+
+  return (
+  <div className={`min-h-screen ${present?'presenting':''}`}>
+    {!present && <TopNav view={view} go={go} role={role} setRole={setRoleNav} unread={unread}
+      notifOpen={notifOpen} setNotifOpen={setNotifOpen} notifs={notifs}
+      markAllRead={()=>setNotifs(ns=>ns.map(n=>({...n,unread:false})))}
+      openCase={openCase} setCoraOpen={setCoraOpen} enterEmergency={()=>setEmergency(true)}
+      startDemo={startDemo} present={present} setPresent={setPresent}/>}
+
+    <main className={`max-w-[1500px] mx-auto px-4 py-6 ${present?'pt-10':''}`} onClick={()=>notifOpen&&setNotifOpen(false)}>
+      {selectedCase && view!=='finale' ? (
+        <CasePage c={selectedCase} vols={vols} orgs={orgs} back={()=>setSelectedCaseId(null)}
+          acceptCase={acceptCase} markComplete={markComplete} confirmResolution={confirmResolution} matchNotify={matchNotify}/>
+      ) : view==='finale' ? (
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="text-center max-w-2xl mx-auto px-4">
+            {['ONE REPORT','BECAME','ONE COMMUNITY ACTION','THAT HELPED','MANY PEOPLE'].map((l,i)=>(
+              <p key={l} className={`rise ${i%2===0?'h1 text-4xl md:text-5xl':'h2 text-lg text-slate-400 my-2 tracking-[.2em]'}`} style={{animationDelay:(i*0.5)+'s', color:i%2===0?undefined:undefined}}>{l}</p>))}
+            <div className="flex items-center justify-center gap-3 mt-10 rise" style={{animationDelay:'2.8s'}}>
+              <Logo s={44}/>
+              <div className="text-left"><p className="h1 text-2xl">CIVORA</p><p className="text-[10px] font-bold tracking-[.2em] text-slate-400">PEOPLE. INTELLIGENCE. ACTION.</p></div>
+            </div>
+            <button className="btn-p px-8 py-3.5 text-sm mt-8 rise" style={{animationDelay:'3.2s'}} onClick={()=>go('explore')}>Back to the Community →</button>
+          </div>
+        </div>
+      ) : view==='explore' ? (
+        <Explore cases={cases} vols={vols} orgs={orgs} openCase={openCase} go={go} stats={stats} enterEmergency={()=>setEmergency(true)} role={role} acceptCase={acceptCase}/>
+      ) : view==='report' ? (
+        demo && ['ai','trust'].includes(demo.scene) ? (
+          <div className="max-w-3xl mx-auto fade-in">
+            <DemoAIScene scene={demo.scene}/>
+          </div>
+        ) : demo && demo.scene==='report' ? (
+          <div className="max-w-3xl mx-auto fade-in"><DemoReportScene/></div>
+        ) : (
+        <ReportFlow createCase={createCase} matchNotify={matchNotify} openCase={openCase} vols={vols} orgs={orgs}/>)
+      ) : view==='volunteer' ? (
+        <VolunteerCenter cases={cases} vols={vols} acceptCase={acceptCase} openCase={openCase} profile={profile} go={go}/>
+      ) : view==='orgs' ? (
+        <OrgCenter cases={cases} vols={vols} orgs={orgs} resources={resources} openCase={openCase} acceptCase={acceptCase} toast={toast}/>
+      ) : view==='insight' ? (
+        <InsightPage openCase={openCase} cases={cases}/>
+      ) : view==='heatmap' ? (
+        <HeatmapPage cases={cases} vols={vols} orgs={orgs} openCase={openCase}/>
+      ) : view==='impact' ? (
+        <ImpactPage stats={stats} profile={profile} cases={cases}/>
+      ) : view==='profile' ? (
+        <ProfilePage profile={profile}/>
+      ) : null}
+
+      {view==='explore' && !selectedCase && (
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button className="btn-o px-5 py-3 text-xs flex items-center gap-2" onClick={()=>go('heatmap')}><I n="flame" s={14}/>Open Impact Heatmap</button>
+          <button className="btn-o px-5 py-3 text-xs flex items-center gap-2" onClick={()=>go('insight')}><I n="brain" s={14}/>View CIVORA Insights</button>
+        </div>)}
+    </main>
+
+    {!coraOpen && !present && <button onClick={()=>setCoraOpen(true)}
+      className="fixed bottom-20 lg:bottom-5 right-5 z-[74] flex items-center gap-2 px-5 py-3.5 rounded-full text-white font-bold text-sm shadow-2xl hover:scale-105"
+      style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}>
+      <I n="sparkles" s={16}/>Ask CORA</button>}
+    <Cora open={coraOpen} setOpen={setCoraOpen} cases={cases} vols={vols} go={go} openCase={openCase}/>
+
+    {emergency && <EmergencyMode cases={cases} vols={vols} orgs={orgs} resources={resources}
+      acceptCase={(id)=>{setEmergency(false); acceptCase(id);}} exit={()=>setEmergency(false)} openCase={(id)=>{setEmergency(false); openCase(id);}}/>}
+    {successCase && <SuccessOverlay caseId={successCase} teamSize={3} elapsed="9 min" onDone={()=>{setSuccessCase(null); go('impact');}}/>}
+    {demo && <DemoMode demo={demo} onPause={demoPause} onResume={demoResume} onSkip={demoSkip} onExit={demoSkip}/>}
+    {present && <PresentMode cases={cases} stats={stats} vols={vols} openCase={openCase} exit={()=>setPresent(false)}/>}
+    {!present && <MobileNav view={view} go={go} setCoraOpen={setCoraOpen}/>}
+    <Toasts toasts={toasts}/>
+  </div>);
+}
+
+/* Demo cinematic sub-scenes */
+const DemoReportScene = () => (
+  <div className="card p-8 text-center">
+    <p className="eyebrow mb-2">CITIZEN REPORT</p>
+    <h2 className="h1 text-2xl">"Dangerous flooded road near Deccan Gymkhana"</h2>
+    <div className="mx-auto mt-5 w-40 h-40 rounded-3xl flex flex-col items-center justify-center text-white shadow-xl" style={{background:'linear-gradient(135deg,#334155,#0f1b2d)'}}>
+      <I n="image" s={34}/><span className="text-[10px] font-bold mt-2">flooded-road.jpg</span>
+    </div>
+    <p className="text-xs text-slate-500 mt-4">One photo. Ten seconds. That's all it took.</p>
+    <div className="flex justify-center gap-2 mt-4">{['Report received','Location pinned','Evidence attached'].map((s,i)=>(
+      <span key={s} className="chip bg-ok/10 text-ok rise" style={{animationDelay:(i*0.6)+'s'}}>✓ {s}</span>))}</div>
+  </div>);
+const DemoAIScene = ({scene}) => (
+  <div className="card p-8">
+    <div className="flex items-center gap-3 mb-6">
+      <span className="relative w-12 h-12 flex items-center justify-center">
+        <span className="absolute inset-0 rounded-2xl spin-slow" style={{background:'conic-gradient(#a855f7,#6366f1,#10b981,#a855f7)', WebkitMask:'radial-gradient(circle, transparent 56%, black 58%)', mask:'radial-gradient(circle, transparent 56%, black 58%)'}}/>
+        <span className="w-8 h-8 rounded-xl flex items-center justify-center text-white" style={{background:'linear-gradient(135deg,#a855f7,#6366f1)'}}><I n="brain" s={15}/></span>
+      </span>
+      <div><h2 className="h1 text-xl">CORA is analyzing</h2><p className="text-xs text-slate-500">Image understanding · signal cross-check · trust scoring</p></div>
+    </div>
+    <div className="space-y-2">
+      {['Input analyzed — photo of waterlogged road','Category detected: Infrastructure','Severity estimated: URGENT','2 related reports found within 72 h','Trust Score computed: 91% — VERIFIED'].map((s,i)=>(
+        <div key={s} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 rise" style={{animationDelay:(i*0.5)+'s'}}>
+          <span className="w-6 h-6 rounded-full bg-ok text-white flex items-center justify-center shrink-0"><I n="check" s={12}/></span>
+          <p className="text-xs font-semibold">{s}</p>
+        </div>))}
+    </div>
+  </div>);
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
